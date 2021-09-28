@@ -42,6 +42,7 @@ File Name | REQUIRED | Defines
 ---|---|---
 gofs.json | REQUIRED | Auto-discovery file that links to all of the other files published by the system.
 system_information.json | REQUIRED | Details including system operator, system location, year implemented, URL, contact info, time zone, etc.
+service_information.json | REQUIRED | Details including service name, branding, etc. 
 vehicle_types.json | Conditionally REQUIRED | Describes the types of vehicles that System operator has available the service. REQUIRED if any vehicle types are references in zones_transfer_rules.json
 zones.json | REQUIRED | Defines zones available for the services. 
 zones_transfer_rules.json | REQUIRED | Defines rules for intra-zones and inter-zone travel and operating hours. 
@@ -104,6 +105,28 @@ Field Name | REQUIRED | Type | Defines
     "system_id": "example_cityname",
     "timezone": "US/Central",
     "language": "en"
+  }
+}
+```
+
+### service_information.json
+
+Defining the services available in the feed. One feed can contained multiple service where services have different features. Ex : Uber's feed can contains the 'uberX' and 'uberPool' services. 
+
+Field Name | REQUIRED | Type | Defines
+---|---|---|---
+`services` | Yes | Array | Array of all the services available in the feed. 
+\-&nbsp;`service_name` | Yes | String | Name of the service
+
+##### Example:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 0,
+  "version": "3.0",
+  "data": {
+   
   }
 }
 ```
@@ -227,3 +250,62 @@ Field Name | REQUIRED | Type | Defines
   }
 }
 ```
+
+### zones.json
+
+The following fields are all attributes within the main "data" object for this feed. The zone data should be a "FeatureCollection" GeoJSON file. 
+
+Field Name | REQUIRED | Type | Defines
+---|---|---|---
+| -&nbsp;`type` | **Required** | String | `"FeatureCollection"` of locations. |
+| -&nbsp;`features` | **Required** | Array | Collection of `"Feature"` objects describing the locations. |
+| &emsp;\-&nbsp;`type` | **Required** | String | `"Feature"` |
+| &emsp;\-&nbsp;`id` | **Required** | ID | ID representing the zone. |
+| &emsp;\-&nbsp;`properties` | **Required** | Object | Location property keys. |
+| &emsp;&emsp;\-&nbsp;`name` | Optional | String | Indicates the name of the zone as displayed to riders. |
+| &emsp;\-&nbsp;`geometry` | **Required** | Object | Geometry of the location as defined by GeoJSON. |
+
+##### Example:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 0,
+  "version": "3.0",
+  "data": {
+    
+  }
+}
+```
+
+### zones_transfer_rules.json
+
+Zone transfer rules contains rules that allows service between zones, including intra-zone service. If service between two zones is not defined, then the service is not possible. 
+
+The following fields are all attributes within the main "data" object for this feed. 
+
+Field Name | REQUIRED | Type | Defines
+---|---|---|---
+`zone_tranfers_rules` | REQUIRED | Array | Array that contains one object per transfer rule as defined below. 
+\- `service_id` | OPTIONAL | ID | ID from a service defined in service_information.json. If not provided, the rule applies to every service in the GOFS feed. 
+\- `from_zone_id` | REQUIRED | ID | ID from a zone defined in zone.json representing the boarding zone for the current rule. 
+\- `to_zone_id` | REQUIRED | ID | ID from a zone defined in zone.json representing the alighting zone for the current rule. 
+\- `start_pickup_window` | OPTIONAL | Time | Time at which the pickup is available in `from_zone_id`.
+\- `end_pickup_window` | OPTIONAL | Time | Time at which the pickup stops being available in `from_zone_id`.
+\- `end_dropoff_window` | OPTIONAL | Time | The last time dropoff is available in `to_zone_id`. Some service allow pickup at a certain hour and can drop off after that time. Ex : Pickup ends at 10PM and the service will be able to drop you off anywhere in the destination zone as long as the drop off happens before 10:30PM. 
+\- `calendar` | REQUIRED | Object | TODO to define calendar where the transfer rule is active
+
+
+##### Example:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 0,
+  "version": "3.0",
+  "data": {
+    
+  }
+}
+```
+
