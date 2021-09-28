@@ -304,7 +304,17 @@ Field Name | REQUIRED | Type | Defines
   "ttl": 0,
   "version": "3.0",
   "data": {
-    
+     "zone_tranfers_rules" : [
+       {
+        "service_id": "route",
+        "from_zone_id": "zoneA",
+        "to_zone_id": "zoneA",
+        "start_pickup_window" : "06:00:00",
+        "end_pickup_window": "09:00:00",
+        "end_dropoff_window": "09:30:00",
+        "calendar": {},
+      }
+     ]
   }
 }
 ```
