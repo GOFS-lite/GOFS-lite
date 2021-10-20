@@ -46,6 +46,7 @@ service_information.json | REQUIRED | Details including service name, branding, 
 vehicle_types.json | Conditionally REQUIRED | Describes the types of vehicles that System operator has available the service. REQUIRED if any vehicle types are references in zones_transfer_rules.json
 zones.json | REQUIRED | Defines zones available for the services. 
 zones_transfer_rules.json | REQUIRED | Defines rules for intra-zones and inter-zone travel and operating hours. 
+calendar.json | REQUIRED | Defines dates where service is active.
 
 ### Field Types
 
