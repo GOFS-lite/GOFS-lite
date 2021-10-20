@@ -293,7 +293,7 @@ Field Name | REQUIRED | Type | Defines
 \- `start_pickup_window` | OPTIONAL | Time | Time at which the pickup is available in `from_zone_id`.
 \- `end_pickup_window` | OPTIONAL | Time | Time at which the pickup stops being available in `from_zone_id`.
 \- `end_dropoff_window` | OPTIONAL | Time | The last time dropoff is available in `to_zone_id`. Some service allow pickup at a certain hour and can drop off after that time. Ex : Pickup ends at 10PM and the service will be able to drop you off anywhere in the destination zone as long as the drop off happens before 10:30PM. 
-\- `calendar` | REQUIRED | Object | TODO to define calendar where the transfer rule is active
+\- `calendar` | REQUIRED | ID | ID from a calendar in calendar.json
 
 
 ##### Example:
@@ -312,10 +312,76 @@ Field Name | REQUIRED | Type | Defines
         "start_pickup_window" : "06:00:00",
         "end_pickup_window": "09:00:00",
         "end_dropoff_window": "09:30:00",
-        "calendar": {},
+        "calendar": "weekday",
       }
      ]
   }
 }
 ```
 
+### calendar.json
+
+This REQUIRED file is used to describe hours and days of operation when vehicles are available for rental. If `system_hours.json` is not published, it indicates that vehicles are available for rental 24 hours a day, 7 days a week.
+
+Field Name | REQUIRED | Type | Defines
+---|---|---|---
+`calendars` | Yes | Array | Array of objects as defined below. 
+\-&nbsp;`id` | Yes | ID | ID for that calendar
+\-&nbsp;`days` | Optional | Array | An array of abbreviations (first 3 letters) of English names of the days of the week for which this object applies (e.g. `["mon", "tue", "wed", "thu", "fri", "sat, "sun"]`). Rental hours MUST NOT be defined more than once for each day and user type. If not defined, it is assumed that the service is active on all days. 
+\-&nbsp;`start_date` | Conditionally REQUIRED | Date | Start date for the calendar. Required if `days` is defined. 
+\-&nbsp;`end_date` | Conditionally REQUIRED | Date | End date for the calendar. Required if `days` is defined. 
+\-&nbsp;`excepted_dates` | Optional | Array | Array of Date removing service on those dates for the current calendar. 
+\-&nbsp;`additional_dates` | Optional | Array | Array of Date adding service on those dates for the current calendar. 
+
+##### Example:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "3.0",
+  "data": {
+    "calendars": [
+        {
+          "id": "weekday",
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ],
+          "start_date": "20210901",
+          "end_date": "20211231",
+          "excepted_dates": [
+            "20210906",
+            "20211225",
+          ],
+          "additional_dates": [
+            "20210906",
+            "20211225",
+          ],
+        },
+        {
+          "id": "weekends_and_labour_day",
+          "days": [
+            "sat",
+            "sun"
+          ],
+          "start_date": "20210901",
+          "end_date": "20211231",
+          "additional_dates": [
+            "20210906",
+          ],
+        },
+        {
+          "id": "christmas",
+          "additional_dates": [
+            "20211225",
+          ],
+        }
+      ]
+    }
+  }
+}
+```
