@@ -294,7 +294,7 @@ Field Name | REQUIRED | Type | Defines
 \- `start_pickup_window` | OPTIONAL | Time | Time at which the pickup is available in `from_zone_id`.
 \- `end_pickup_window` | OPTIONAL | Time | Time at which the pickup stops being available in `from_zone_id`.
 \- `end_dropoff_window` | OPTIONAL | Time | The last time dropoff is available in `to_zone_id`. Some service allow pickup at a certain hour and can drop off after that time. Ex : Pickup ends at 10PM and the service will be able to drop you off anywhere in the destination zone as long as the drop off happens before 10:30PM. 
-\- `calendar` | REQUIRED | ID | ID from a calendar in calendar.json
+\- `calendars` | REQUIRED | Array | Array of IDs from a calendar in calendar.json
 
 
 ##### Example:
@@ -313,7 +313,7 @@ Field Name | REQUIRED | Type | Defines
         "start_pickup_window" : "06:00:00",
         "end_pickup_window": "09:00:00",
         "end_dropoff_window": "09:30:00",
-        "calendar": "weekday",
+        "calendars": "weekday",
       }
      ]
   }
@@ -332,7 +332,6 @@ Field Name | REQUIRED | Type | Defines
 \-&nbsp;`start_date` | Conditionally REQUIRED | Date | Start date for the calendar. Required if `days` is defined. 
 \-&nbsp;`end_date` | Conditionally REQUIRED | Date | End date for the calendar. Required if `days` is defined. 
 \-&nbsp;`excepted_dates` | Optional | Array | Array of Date removing service on those dates for the current calendar. 
-\-&nbsp;`additional_dates` | Optional | Array | Array of Date adding service on those dates for the current calendar. 
 
 ##### Example:
 
@@ -373,12 +372,6 @@ Field Name | REQUIRED | Type | Defines
           "end_date": "20211231",
           "additional_dates": [
             "20210906",
-          ],
-        },
-        {
-          "id": "christmas",
-          "additional_dates": [
-            "20211225",
           ],
         }
       ]
