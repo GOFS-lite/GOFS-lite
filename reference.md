@@ -62,7 +62,7 @@ Presence conditions applicable to fields and files:
 
 ## Dataset Files
 
-File Name | Presence | Defines
+File Name | Presence | Description
 ---|---|---
 gofs.json | REQUIRED | Auto-discovery file that links to all of the other files published by the system.
 system_information.json | REQUIRED | Details including system operator, system location, year implemented, URL, contact info, timezone, etc.
@@ -85,12 +85,12 @@ calendar.json | REQUIRED | Defines dates where service is active.
 
 Every JSON file presented in this specification contains the same common header information at the top level of the JSON response object:
 
-Field Name | REQUIRED | Type | Defines
+Field Name | Presence | Type | Description
 ---|---|---|---
-`last_updated` | Yes | Timestamp | Indicates the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
-`ttl` | Yes | Non-negative integer | Number of seconds before the data in the feed will be updated again (0 if the data should always be refreshed).
-`version`  | Yes | String | GBFS version number to which the feed confirms, according to the versioning framework.
-`data` | Yes | Object | Response data in the form of name:value pairs.
+`last_updated` | REQUIRED | Timestamp | Indicates the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
+`ttl` | REQUIRED | Non-negative integer | Number of seconds before the data in the feed will be updated again (0 if the data should always be refreshed).
+`version`  | REQUIRED | String | GBFS version number to which the feed confirms, according to the versioning framework.
+`data` | REQUIRED | Object | Response data in the form of name:value pairs.
 
 ##### Example:
 
@@ -116,7 +116,7 @@ Field Name | REQUIRED | Type | Defines
 
 The `gofs.json` discovery file SHOULD represent a single system or geographic area in which vehicles are operated. The location (URL) of the `gbfs.json` file SHOULD be made available to the public using the specification’s [auto-discovery](#auto-discovery) function.
 
-Field Name | Presence | Type | Defines
+Field Name | Presence | Type | Description
 ---|---|---|---
 `language` | REQUIRED | Language | The language that will be used throughout the rest of the files. It MUST match the value in the [system_information.json](#system_informationjson) file.
 \-&nbsp;`feeds` | REQUIRED | Array | An array of all of the feeds that are published by this auto-discovery file. Each element in the array is an object with the keys below.
@@ -163,7 +163,7 @@ Field Name | Presence | Type | Defines
 
 The following fields are all attributes within the main "data" object for this feed.
 
-Field Name | Presence | Type | Defines
+Field Name | Presence | Type | Description
 ---|---|---|---
 `system_id` | REQUIRED | ID | This is a globally unique identifier for the vehicle share system.  It is up to the publisher of the feed to guarantee uniqueness and MUST be checked against existing `system_id` fields in [systems.csv](https://github.com/NABSA/gbfs/blob/master/systems.csv) to ensure this. This value is intended to remain the same over the life of the system. <br><br>Each distinct system or geographic area in which vehicles are operated SHOULD have its own `system_id`. Systems IDs SHOULD be recognizable as belonging to a particular system as opposed to random strings - for example, `bcycle_austin` or `biketown_pdx`.
 `language` | REQUIRED | Language | The language that will be used throughout the rest of the files. It MUST match the value in the [gbfs.json](#gbfsjson) file.
@@ -206,7 +206,7 @@ Field Name | Presence | Type | Defines
 
 Defining the services available in the feed. One feed MAY contain multiple service where services have different features. Ex : Uber's feed MAY contains the 'uberX' and 'uberPool' services.
 
-Field Name | Presence | Type | Defines
+Field Name | Presence | Type | Description
 ---|---|---|---
 `services` | REQUIRED | Array | Array of all the services available in the feed.
 \-&nbsp;`service_name` | REQUIRED| String | Name of the service
@@ -228,7 +228,7 @@ Field Name | Presence | Type | Defines
 
 REQUIRED if any vehicle types are references in zones_transfer_rules.json. <br/>The following fields are all attributes within the main "data" object for this feed.
 
-Field Name | Presence | Type | Defines
+Field Name | Presence | Type | Description
 ---|---|---|---
 `vehicle_types` | REQUIRED | Array | Array that contains one object per vehicle type in the system as defined below.
 \- `vehicle_type_id` | REQUIRED | ID | Unique identifier of a vehicle type. See [Field Types](#field-types) above for ID field requirements.
@@ -258,7 +258,7 @@ Field Name | Presence | Type | Defines
 
 The following fields are all attributes within the main "data" object for this feed. The zone data should be a "FeatureCollection" GeoJSON file. 
 
-Field Name | Presence | Type | Defines
+Field Name | Presence | Type | Description
 ---|---|---|---
 | -&nbsp;`type` | REQUIRED | String | `"FeatureCollection"` of locations. |
 | -&nbsp;`features` | REQUIRED | Array | Collection of `"Feature"` objects describing the locations. |
@@ -287,7 +287,7 @@ Zone transfer rules contains rules that allows service between zones, including 
 
 The following fields are all attributes within the main "data" object for this feed. 
 
-Field Name | Presence | Type | Defines
+Field Name | Presence | Type | Description
 ---|---|---|---
 `zone_tranfers_rules` | REQUIRED | Array | Array that contains one object per transfer rule as defined below. 
 \- `service_id` | OPTIONAL | ID | ID from a service defined in service_information.json. If not provided, the rule applies to every service in the GOFS feed. 
@@ -326,7 +326,7 @@ Field Name | Presence | Type | Defines
 
 This REQUIRED file is used to describe hours and days of operation when vehicles are available for rental. If `system_hours.json` is not published, it indicates that vehicles are available for rental 24 hours a day, 7 days a week.
 
-Field Name | Presence | Type | Defines
+Field Name | Presence | Type | Description
 ---|---|---|---
 `calendars` | REQUIRED | Array | Array of objects as defined below. 
 \-&nbsp;`id` | REQUIRED | ID | ID for that calendar
