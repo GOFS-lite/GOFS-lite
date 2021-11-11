@@ -81,7 +81,7 @@ Publishers SHOULD implement auto-discovery of GOFS feeds by linking to the locat
 
 - The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_infomation.json` file.
 - This is referenced via a _link_ tag with the following format:
-  - `<link rel="gbfs" type="application/json" href="https://www.example.com/data/gbfs.json" />`
+  - `<link rel="gofs" type="application/json" href="https://www.example.com/data/gofs.json" />`
   - References:
     - https://microformats.org/wiki/existing-rel-values
     - https://microformats.org/wiki/rel-faq#How_is_rel_used
@@ -102,7 +102,7 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `last_updated` | REQUIRED | Timestamp | Indicates the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
 `ttl` | REQUIRED | Non-negative integer | Number of seconds before the data in the feed will be updated again (0 if the data should always be refreshed).
-`version`  | REQUIRED | String | GBFS version number to which the feed confirms, according to the versioning framework.
+`version`  | REQUIRED | String | GOFS version number to which the feed confirms, according to the versioning framework.
 `data` | REQUIRED | Object | Response data in the form of name:value pairs.
 
 ##### Example:
@@ -125,7 +125,7 @@ Field Name | Presence | Type | Description
 
 #### gofs.json
 
-The `gofs.json` discovery file SHOULD represent a single system or geographic area in which vehicles are operated. The location (URL) of the `gbfs.json` file SHOULD be made available to the public using the specification’s [auto-discovery](#auto-discovery) function.
+The `gofs.json` discovery file SHOULD represent a single system or geographic area in which vehicles are operated. The location (URL) of the `gofs.json` file SHOULD be made available to the public using the specification’s [auto-discovery](#auto-discovery) function.
 The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
@@ -147,11 +147,11 @@ Field Name | Presence | Type | Description
       "feeds": [
         {
           "name": "system_information",
-          "url": "https://www.example.com/gbfs/1/en/system_information"
+          "url": "https://www.example.com/gofs/1/en/system_information"
         },
         {
           "name": "zones",
-          "url": "https://www.example.com/gbfs/1/en/zones"
+          "url": "https://www.example.com/gofs/1/en/zones"
         }
       ]
     },
@@ -159,11 +159,11 @@ Field Name | Presence | Type | Description
       "feeds": [
         {
           "name": "system_information",
-          "url": "https://www.example.com/gbfs/1/fr/system_information"
+          "url": "https://www.example.com/gofs/1/fr/system_information"
         },
         {
           "name": "zones",
-          "url": "https://www.example.com/gbfs/1/fr/zones"
+          "url": "https://www.example.com/gofs/1/fr/zones"
         }
       ]
     }
