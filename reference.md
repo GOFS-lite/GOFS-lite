@@ -9,8 +9,8 @@ This document defines the format and structure of the files that comprise a GOFS
    - [Presence](#presence)
    - [Field Types](#field-types)
    - [Field Signs](#field-signs)
-2. [Dataset Files](#file-definitions)
-3. [File Requirements](#file-definitions)
+2. [Dataset Files](#fdataset-files)
+3. [File Requirements](#file-requirements)
    - [Auto-discovery](#auto-discovery)
    - [Localization](#localization)
    - [Output Format](#output-format)
@@ -349,7 +349,9 @@ Field Name | Presence | Type | Description
                 ]
               ]
             ],
-            "properties": 
+            "properties": {
+              "name": "Montréal Region"
+            }
           }
         }
       ]
