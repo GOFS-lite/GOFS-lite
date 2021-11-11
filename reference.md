@@ -9,11 +9,12 @@ This document defines the format and structure of the files that comprise a GOFS
    - [Presence](#presence)
    - [Field Types](#field-types)
    - [Field Signs](#field-signs)
-3. [Dataset Files](#file-definitions)
-2. [File Requirements](#file-definitions)
+2. [Dataset Files](#file-definitions)
+3. [File Requirements](#file-definitions)
+   - [Auto-discovery](#auto-discovery)
    - [Localization](#localization)
    - [Output Format](#output-format)
-4. [Field Definitions](#field-definitions)
+5. [Field Definitions](#field-definitions)
    - [gofs.json](#gofsjson)
    - [system_information.json](#system_informationjson)
    - [service_information.json](#service_informationjson)
@@ -43,11 +44,11 @@ Presence conditions applicable to fields and files:
 ### Field Types
 
 - **Array** - A JSON element consisting of an ordered sequence of zero or more values.
-- **Date** - Service day in the YYYYMMDD format. Since time within a service day may be above 24:00:00, a service day may contain information for the subsequent day(s). <br> *Example: `20180913` for September 13th, 2018.*
+- **Date** - Service day in the YYYYMMDD format. Since time within a service day may be above 24:00:00, a service day may contain information for the subsequent day(s). <br> *Example: `20211109` for November 9th, 2021.*
 - **Email** - An email address. <br> *Example: `example@example.com`*
-- **Enum** - An option from a set of predefined constants defined in the "Description" column. <br> *Example: The `route_type` field contains a `0` for tram, a `1` for subway...*
+- **Enum** - An option from a set of predefined constants listed in the "Description" column. <br> *Example: If provided, the `wheelchair_boarding` field MUST indicate either `boarding_accessible`, `boarding_inacessible`, or any other options available in the list.*
 - **ID** - Should be represented as a string that identifies that particular entity. An ID:
-    * MUST be unique within like fields (e.g. `zone_id` MUST be unique among zones)
+    * MUST be unique within like fields (e.g. `id` MUST be unique among zones)
     * does not have to be globally unique, unless otherwise specified
     * MUST NOT contain spaces
     * MUST be persistent for a given entity (zone, plan, etc).
@@ -67,12 +68,24 @@ File Name | Presence | Description
 gofs.json | REQUIRED | Auto-discovery file that links to all of the other files published by the system.
 system_information.json | REQUIRED | Details including system operator, system location, year implemented, URL, contact info, timezone, etc.
 service_information.json | REQUIRED | Details including service name, branding, etc.
-vehicle_types.json | Conditionally REQUIRED | Describes the types of vehicles that System operator has available the service. REQUIRED if any vehicle types are references in zones_transfer_rules.json
+vehicle_types.json | Conditionally REQUIRED | Describes the types of vehicles available in the on-demand service system. REQUIRED if any vehicle types are references in zones_transfer_rules.json
 zones.json | REQUIRED | Defines zones available for the services.
 zones_transfer_rules.json | REQUIRED | Defines rules for intra-zones and inter-zone travel and operating hours.
 calendar.json | REQUIRED | Defines dates where service is active.
 
 ## File Requirements
+
+### Auto-Discovery
+
+Publishers SHOULD implement auto-discovery of GOFS feeds by linking to the location of the `gofs.json` auto-discovery endpoint.
+
+- The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_infomation.json` file.
+- This is referenced via a _link_ tag with the following format:
+  - `<link rel="gbfs" type="application/json" href="https://www.example.com/data/gbfs.json" />`
+  - References:
+    - https://microformats.org/wiki/existing-rel-values
+    - https://microformats.org/wiki/rel-faq#How_is_rel_used
+- An on-demand service's landing page MAY contain links to auto-discovery files for multiple systems.
 
 ### Localization
 
@@ -98,30 +111,29 @@ Field Name | Presence | Type | Description
 {
   "last_updated": 1609866247,
   "ttl": 3600,
-  "version": "3.0",
+  "version": "1.0",
   "data": {
-    "name": "Example Bike Rental",
     "system_id": "example_cityname",
+    "language": "en",
     "timezone": "US/Central",
-    "language": "en"
+    "name": "Example MicroTransit"
   }
 }
 ```
-
-*****
 
 ## Field Definitions
 
 #### gofs.json
 
 The `gofs.json` discovery file SHOULD represent a single system or geographic area in which vehicles are operated. The location (URL) of the `gbfs.json` file SHOULD be made available to the public using the specification’s [auto-discovery](#auto-discovery) function.
+The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
 `language` | REQUIRED | Language | The language that will be used throughout the rest of the files. It MUST match the value in the [system_information.json](#system_informationjson) file.
 \-&nbsp;`feeds` | REQUIRED | Array | An array of all of the feeds that are published by this auto-discovery file. Each element in the array is an object with the keys below.
 &emsp;\-&nbsp;`name` | REQUIRED | String | Key identifying the type of feed this is. The key MUST be the base file name defined in the spec for the corresponding feed type (`zones` for `zones.json` file, `zones_transfer_rules` for `zones_transfer_rules.json` file).
-&emsp;\-&nbsp;`url` | REQUIRED | URL | URL for the feed. Note that the actual feed endpoints (urls) MAY NOT be defined in the `file_name.json` format. For example, a valid feed endpoint could end with `station_info` instead of `station_information.json`.
+&emsp;\-&nbsp;`url` | REQUIRED | URL | URL for the feed. Note that the actual feed endpoints (urls) MAY NOT be defined in the `file_name.json` format. For example, a valid feed endpoint could end with `zones` instead of `zones.json`.
 
 ##### Example:
 
@@ -129,7 +141,7 @@ Field Name | Presence | Type | Description
 {
   "last_updated": 1609866247,
   "ttl": 0,
-  "version": "3.0",
+  "version": "1.0",
   "data": {
     "en": {
       "feeds": [
@@ -161,22 +173,24 @@ Field Name | Presence | Type | Description
 
 ### system_information.json
 
+This file defines the attributes of the on-demand service system.
 The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`system_id` | REQUIRED | ID | This is a globally unique identifier for the vehicle share system.  It is up to the publisher of the feed to guarantee uniqueness and MUST be checked against existing `system_id` fields in [systems.csv](https://github.com/NABSA/gbfs/blob/master/systems.csv) to ensure this. This value is intended to remain the same over the life of the system. <br><br>Each distinct system or geographic area in which vehicles are operated SHOULD have its own `system_id`. Systems IDs SHOULD be recognizable as belonging to a particular system as opposed to random strings - for example, `bcycle_austin` or `biketown_pdx`.
-`language` | REQUIRED | Language | The language that will be used throughout the rest of the files. It MUST match the value in the [gbfs.json](#gbfsjson) file.
-`name` | REQUIRED | String | Name of the system to be displayed to customers.
-`short_name` | OPTIONAL | String | OPTIONAL abbreviation for a system.
-`operator` | OPTIONAL | String | Name of the system operator.
-`url` | OPTIONAL | URL | The URL of the vehicle share system.
-`purchase_url` | OPTIONAL | URL | URL where a customer can purchase a membership.
+`system_id` | REQUIRED | ID | Unique identifier of the on-demand service system. This value SHOULD remain the same over the life of the system.
+`language` | REQUIRED | Language | Language used throughout the rest of the files.
+`timezone` | REQUIRED | Timezone | Timezone where the on-demand service system is located.
+`name` | REQUIRED | String | Name of the on-demand service system to be displayed to customers.
+`short_name` | OPTIONAL | String | Abbreviation commonly used to name the on-demand service system.
+`operator` | OPTIONAL | String | Name of the on-demand service operator.
+`url` | OPTIONAL | URL | URL of the on-demand service system.
+`purchase_url` | OPTIONAL | URL | URL where a customer can subscribe to the on-demand services.
 `start_date` | OPTIONAL | Date | Date that the system began operations.
-`phone_number` | OPTIONAL | Phone Number | This OPTIONAL field SHOULD contain a single voice telephone number for the specified system’s customer service department. It can and SHOULD contain punctuation marks to group the digits of the number. Dialable text (for example, Capital Bikeshare’s "877-430-BIKE") is permitted, but the field MUST NOT contain any other descriptive text.
-`email` | OPTIONAL | Email | This OPTIONAL field SHOULD contain a single contact email address actively monitored by the operator’s customer service department. This email address SHOULD be a direct contact point where riders can reach a customer service representative.
-`feed_contact_email` | OPTIONAL | Email | This OPTIONAL field SHOULD contain a single contact email for feed consumers to report technical issues with the feed.
-`timezone` | REQUIRED | Timezone | The time zone where the system is located.
+`phone_number` | OPTIONAL | Phone Number | Voice telephone number for the specified system’s customer service department. It can and SHOULD contain punctuation marks to group the digits of the number. Dialable text (for example, Capital Bikeshare’s "877-430-BIKE") is permitted, but the field MUST NOT contain any other descriptive text.
+`email` | OPTIONAL | Email | Contact email address actively monitored by the operator’s customer service department. This email address SHOULD be a direct contact point where riders can reach a customer service representative.
+`feed_contact_email` | OPTIONAL | Email | Contact email for feed consumers to report technical issues with the feed.
+
 
 ##### Example:
 
@@ -184,32 +198,34 @@ Field Name | Presence | Type | Description
 {
   "last_updated": 1611598155,
   "ttl": 1800,
-  "version": "3.0",
+  "version": "1.0",
   "data": {
     "system_id": "example_cityname",
     "language": "en",
+    "timezone": "US/Central",
     "name": "Example MicroTransit",
-    "short_name": "Micro Example",
-    "operator": "Micro, Inc",
+    "short_name": "Micro",
+    "operator": "MicroTransit, Inc",
     "url": "https://www.example.com",
     "purchase_url": "https://www.example.com",
-    "start_date": "2010-06-10",
+    "start_date": "20100610",
     "phone_number": "1-800-555-1234",
     "email": "customerservice@example.com",
-    "feed_contact_email": "datafeed@example.com",
-    "timezone": "US/Central"
+    "feed_contact_email": "datafeed@example.com"
   }
 }
 ```
 
 ### service_information.json
 
-Defining the services available in the feed. One feed MAY contain multiple service where services have different features. Ex : Uber's feed MAY contains the 'uberX' and 'uberPool' services.
+This files defines the on-demand services available to the riders. One feed MAY contain multiple services with different features and amenities (e.g. A ridehail service system MAY offer the 'Regular Ride', 'Large Ride' and 'Shared Ride' services).
+The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
 `services` | REQUIRED | Array | Array of all the services available in the feed.
-\-&nbsp;`service_name` | REQUIRED| String | Name of the service
+\-&nbsp;`service_id` | REQUIRED| ID | Unique identifier of the on-demand service. This value SHOULD remain the same over the availability of the service.
+\-&nbsp;`service_name` | REQUIRED| String | Name of the service to be displayed to customers.
 
 ##### Example:
 
@@ -217,23 +233,37 @@ Field Name | Presence | Type | Description
 {
   "last_updated": 1609866247,
   "ttl": 0,
-  "version": "3.0",
+  "version": "1.0",
   "data": {
-   
+    "services": [
+      {
+        "service_id": "regular_ride",
+        "service_name": "Regular Ride",
+      },
+      {
+        "service_id": "large_ride",
+        "service_name": "Large Ride",
+      },
+      {
+        "service_id": "shared_ride",
+        "service_name": "Large Ride",
+      }
+    ]
   }
 }
 ```
 
 ### vehicle_types.json
 
-REQUIRED if any vehicle types are references in zones_transfer_rules.json. <br/>The following fields are all attributes within the main "data" object for this feed.
+This file defines the vehicle types used for operating the on-demand services. This file is REQUIRED if any vehicle types are referenced in `zones_transfer_rules.json`.
+The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
 `vehicle_types` | REQUIRED | Array | Array that contains one object per vehicle type in the system as defined below.
-\- `vehicle_type_id` | REQUIRED | ID | Unique identifier of a vehicle type. See [Field Types](#field-types) above for ID field requirements.
-\- `max_capacity` | OPTIONAL | Non-Negative Integer | This number denotes the maximum number of riders that the vehicle can carry.
-\- `wheelchair_boarding` | OPTIONAL | Enum | This value denotes the possibility of boarding the vehicle with a wheelchair. Valid options are:<br /><ul><li>`boarding_accessible`</li><li>`boarding_inaccessible`</li><li>`boarding_accessible_with_assistance`</li></ul>
+\-&nbsp; `vehicle_type_id` | REQUIRED | ID | Unique identifier of the vehicle type.
+\-&nbsp; `max_capacity` | OPTIONAL | Non-Negative Integer | Maximum number of riders that the vehicle can legally carry.
+\-&nbsp; `wheelchair_boarding` | OPTIONAL | Enum | Possibility for riders with a wheelchair to board the vehicle. Valid options are:<br /><ul><li>`boarding_accessible`</li><li>`boarding_inaccessible`</li><li>`boarding_accessible_with_assistance`</li></ul>
 
 ##### Example:
 
@@ -241,7 +271,7 @@ Field Name | Presence | Type | Description
 {
   "last_updated": 1609866247,
   "ttl": 0,
-  "version": "3.0",
+  "version": "1.0",
   "data": {
     "vehicle_types": [
       {
@@ -256,17 +286,20 @@ Field Name | Presence | Type | Description
 
 ### zones.json
 
-The following fields are all attributes within the main "data" object for this feed. The zone data should be a "FeatureCollection" GeoJSON file. 
+This file geographically defines the zones where the on-demand services are available to riders. The zone data should be a "FeatureCollection" GeoJSON file.
+The following fields are all attributes within the main "data" object for this feed. 
 
 Field Name | Presence | Type | Description
 ---|---|---|---
+| `zones` | REQUIRED | Array | Each zone is defined as an object within the array of features, as follows. |
 | -&nbsp;`type` | REQUIRED | String | `"FeatureCollection"` of locations. |
-| -&nbsp;`features` | REQUIRED | Array | Collection of `"Feature"` objects describing the locations. |
-| &emsp;\-&nbsp;`type` | REQUIRED | String | `"Feature"` |
-| &emsp;\-&nbsp;`id` | REQUIRED | ID | ID representing the zone. |
-| &emsp;\-&nbsp;`properties` | REQUIRED | Object | Location property keys. |
-| &emsp;&emsp;\-&nbsp;`name` | OPTIONAL | String | Indicates the name of the zone as displayed to riders. |
-| &emsp;\-&nbsp;`geometry` | REQUIRED | Object | Geometry of the location as defined by GeoJSON. |
+| -&nbsp;`features` | REQUIRED | Array | Collection of `"Feature"` objects describing many zones. |
+| -&nbsp;\-&nbsp;`type` | REQUIRED | String | `"Feature"` |
+| -&nbsp;\-&nbsp;`id` | REQUIRED | ID | Unique identifier of the zone. |
+| -&nbsp;\-&nbsp;`geometry` | REQUIRED | Object | Geometry of the location as defined by GeoJSON. |
+| -&nbsp;\-&nbsp;`properties` | REQUIRED | Object | Location property keys. |
+| -&nbsp;\-&nbsp;\-&nbsp;`name` | OPTIONAL | String | Indicates the name of the zone as displayed to riders. |
+
 
 ##### Example:
 
@@ -274,29 +307,72 @@ Field Name | Presence | Type | Description
 {
   "last_updated": 1609866247,
   "ttl": 0,
-  "version": "3.0",
+  "version": "1.0",
   "data": {
-    
+    "zones": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "id": "zoneA",
+          "geometry": {
+            "type": "MultiPolygon",
+            "coordinates": [
+              [
+                [
+                  -74.168701171875,
+                  45.22848059584359
+                ],
+                [
+                  -73.245849609375,
+                  45.24008561090264
+                ],
+                [
+                  -73.0645751953125,
+                  45.59482210127054
+                ],
+                [
+                  -73.40240478515625,
+                  45.87088761346192
+                ],
+                [
+                  -74.0313720703125,
+                  45.805828539928356
+                ],
+                [
+                  -74.24285888671875,
+                  45.515970517182474
+                ],
+                [
+                  -74.168701171875,
+                  45.22848059584359
+                ]
+              ]
+            ],
+            "properties": 
+          }
+        }
+      ]
+    }
   }
 }
 ```
 
 ### zones_transfer_rules.json
 
-Zone transfer rules contains rules that allows service between zones, including intra-zone service. If service between two zones is not defined, then the service is not possible. 
-
+This file contains rules that enable on-demand services between zones, including intra-zone service, and that provide operating hours. At least one service between two zones MUST be defined. 
 The following fields are all attributes within the main "data" object for this feed. 
 
 Field Name | Presence | Type | Description
 ---|---|---|---
 `zone_tranfers_rules` | REQUIRED | Array | Array that contains one object per transfer rule as defined below. 
-\- `service_id` | OPTIONAL | ID | ID from a service defined in service_information.json. If not provided, the rule applies to every service in the GOFS feed. 
-\- `from_zone_id` | REQUIRED | ID | ID from a zone defined in zone.json representing the boarding zone for the current rule. 
-\- `to_zone_id` | REQUIRED | ID | ID from a zone defined in zone.json representing the alighting zone for the current rule. 
-\- `start_pickup_window` | OPTIONAL | Time | Time at which the pickup is available in `from_zone_id`.
-\- `end_pickup_window` | OPTIONAL | Time | Time at which the pickup stops being available in `from_zone_id`.
-\- `end_dropoff_window` | OPTIONAL | Time | The last time dropoff is available in `to_zone_id`. Some service allow pickup at a certain hour and can drop off after that time. Ex : Pickup ends at 10PM and the service will be able to drop you off anywhere in the destination zone as long as the drop off happens before 10:30PM. 
-\- `calendars` | REQUIRED | Array | Array of IDs from a calendar in calendar.json
+\-&nbsp; `service_id` | OPTIONAL | ID | ID from a service defined in `service_information.json`. If not provided, the rule applies to every service in the GOFS feed. 
+\-&nbsp; `from_zone_id` | REQUIRED | ID | ID from a zone defined in `zones.json` representing the boarding zone for the current rule. 
+\-&nbsp; `to_zone_id` | REQUIRED | ID | ID from a zone defined in `zones.json` representing the alighting zone for the current rule. `from_zone_id` and `to_zone_id` MAY reference the same zone. 
+\-&nbsp; `start_pickup_window` | OPTIONAL | Time | Time at which the pickup starts being available in `from_zone_id` defined in this array.
+\-&nbsp; `end_pickup_window` | OPTIONAL | Time | Time at which the pickup stops being available in `from_zone_id` defined in this array.
+\-&nbsp; `end_dropoff_window` | OPTIONAL | Time | Time at which the drop off stops being available in `to_zone_id` defined in this array. Some services differ the end of the pickup time and the end of the drop off time (e.g.: The pickup time ends at 10PM in the origin zone but it is still possible to be dropped off in the destination zone until 10:30PM). 
+\-&nbsp; `calendars` | REQUIRED | Array | Array of IDs from a calendar in `calendar.json`.
 
 
 ##### Example:
@@ -305,35 +381,36 @@ Field Name | Presence | Type | Description
 {
   "last_updated": 1609866247,
   "ttl": 0,
-  "version": "3.0",
+  "version": "1.0",
   "data": {
-     "zone_tranfers_rules" : [
-       {
-        "service_id": "route",
+    "zone_tranfers_rules" : [
+      {
+        "service_id": "regular_ride",
         "from_zone_id": "zoneA",
         "to_zone_id": "zoneA",
         "start_pickup_window" : "06:00:00",
         "end_pickup_window": "09:00:00",
         "end_dropoff_window": "09:30:00",
-        "calendars": "weekday",
+        "calendars": ["weekend", "labor_day"]
       }
-     ]
+   ]
   }
 }
 ```
 
 ### calendar.json
 
-This REQUIRED file is used to describe hours and days of operation when vehicles are available for rental. If `system_hours.json` is not published, it indicates that vehicles are available for rental 24 hours a day, 7 days a week.
+This file defines the dates and days when on-demand services are available to riders.
+The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
 `calendars` | REQUIRED | Array | Array of objects as defined below. 
-\-&nbsp;`id` | REQUIRED | ID | ID for that calendar
-\-&nbsp;`days` | OPTIONAL | Array | An array of abbreviations (first 3 letters) of English names of the days of the week for which this object applies (e.g. `["mon", "tue", "wed", "thu", "fri", "sat, "sun"]`). Rental hours MUST NOT be defined more than once for each day and user type. If not defined, it is assumed that the service is active on all days. 
-\-&nbsp;`start_date` | Conditionally REQUIRED | Date | Start date for the calendar. Required if `days` is defined. 
-\-&nbsp;`end_date` | Conditionally REQUIRED | Date | End date for the calendar. Required if `days` is defined. 
-\-&nbsp;`excepted_dates` | OPTIONAL | Array | Array of Date removing service on those dates for the current calendar. 
+\-&nbsp;`id` | REQUIRED | ID | Unique identifier of the calendar.
+\-&nbsp;`days` | OPTIONAL | Array | Array of abbreviations (first 3 letters) of English names of the days of the week for which this object applies (e.g. `["mon", "tue", "wed", "thu", "fri", "sat, "sun"]`). If days are not defined, it is assumed that the service is active all days of the week. 
+\-&nbsp;`start_date` | Conditionally REQUIRED | Date | Start date for the calendar. 
+\-&nbsp;`end_date` | Conditionally REQUIRED | Date | End date for the calendar. The start date and the end date may be the same.
+\-&nbsp;`excepted_dates` | OPTIONAL | Array | Array of dates removing service on these specific dates from the calendar defined. 
 
 ##### Example:
 
@@ -341,7 +418,7 @@ Field Name | Presence | Type | Description
 {
   "last_updated": 1609866247,
   "ttl": 86400,
-  "version": "3.0",
+  "version": "1.0",
   "data": {
     "calendars": [
         {
@@ -354,27 +431,24 @@ Field Name | Presence | Type | Description
             "fri"
           ],
           "start_date": "20210901",
-          "end_date": "20211231",
+          "end_date": "20211031",
           "excepted_dates": [
-            "20210906",
-            "20211225",
-          ],
-          "additional_dates": [
-            "20210906",
-            "20211225",
-          ],
+            "20210906"
+          ]
         },
         {
-          "id": "weekends_and_labour_day",
+          "id": "weekend",
           "days": [
             "sat",
             "sun"
           ],
           "start_date": "20210901",
-          "end_date": "20211231",
-          "additional_dates": [
-            "20210906",
-          ],
+          "end_date": "20211031"
+        },
+        {
+          "id": "labor_day"
+          "start_date": "20210906",
+          "end_date": "20210906"
         }
       ]
     }
