@@ -8,8 +8,7 @@ This document defines the format and structure of the files that comprise a GOFS
    - [Term Definitions](#term-definitions)
    - [Presence](#presence)
    - [Field Types](#field-types)
-   - [Field Signs](#field-signs)
-2. [Dataset Files](#fdataset-files)
+2. [Dataset Files](#dataset-files)
 3. [File Requirements](#file-requirements)
    - [Auto-discovery](#auto-discovery)
    - [Localization](#localization)
@@ -58,7 +57,7 @@ Presence conditions applicable to fields and files:
 - **Language** - An IETF BCP 47 language code. For an introduction to IETF BCP 47, refer to [http://www.rfc-editor.org/rfc/bcp/bcp47.txt](http://www.rfc-editor.org/rfc/bcp/bcp47.txt) and [http://www.w3.org/International/articles/language-tags/](http://www.w3.org/International/articles/language-tags/). <br> *Example: `en` for English, `en-US` for American English or `de` for German.*
 - **Non-negative Integer** - An integer greater than or equal to 0.
 - **Object** - A JSON element consisting of key-value pairs (fields).
-- **Phone number** - A phone number. The phone number MUST include the country calling code (e.g. the North American phone number "(987) 654-3210" MUST be provided as `+19876543210`; the French phone number "01.23.45.67.89" MUST be provided as `+33123456789`. The phone number MUST NOT include any punctuation marks or dialable text.
+- **Phone number** - A phone number. The phone number MUST include the country calling code. The phone number MUST NOT include any punctuation marks or dialable text. <br> *Example: the North American phone number "(987) 654-3210" MUST be provided as `+19876543210`; the French phone number "01.23.45.67.89" MUST be provided as `+33123456789`*.
 - **String** - A text string of UTF-8 characters, which is aimed to be displayed and which must therefore be human readable.
 - **Time** - Time in the HH:MM:SS format (H:MM:SS is also accepted). The time is measured from "noon minus 12h" of the service day (effectively midnight except for days on which daylight savings time changes occur). For times occurring after midnight, enter the time as a value greater than 24:00:00 in HH:MM:SS local time for the day on which the trip schedule begins. <br> *Example: `14:30:00` for 2:30PM or `25:35:00` for 1:35AM on the next day.*
 - **Timezone** - TZ timezone from the [https://www.iana.org/time-zones](https://www.iana.org/time-zones). Timezone names never contain the space character but may contain an underscore. Refer to [http://en.wikipedia.org/wiki/List\_of\_tz\_zones](http://en.wikipedia.org/wiki/List\_of\_tz\_zones) for a list of valid values. <br> *Example: `Asia/Tokyo`, `America/Los_Angeles` or `Africa/Cairo`.*
