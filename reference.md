@@ -21,7 +21,7 @@ This document defines the format and structure of the files that comprise a GOFS
    - [service_brands.json](#service_brandsjson)
    - [vehicle_types](#vehicle_typesjson)
    - [zones.json](#zonesjson)
-   - [zone_travel_rules.json](#zone_travel_rulesjson)
+   - [operating_rules.json](#operating_rulesjson)
    - [calendar.json](#calendarjson)
 
 
@@ -67,7 +67,7 @@ Presence conditions applicable to fields and files:
 
 ## Dataset Files
 
-By default, on-demand services are not available anywhere. To represent on-demand services in operation, at least one zone and one travel rule MUST be defined respectively in `zones.json` and `zone_travel_rules.json`.
+By default, on-demand services are not available anywhere. To represent on-demand services in operation, at least one zone and one operating rule MUST be defined respectively in `zones.json` and `operating_rules.json`.
 
 File Name | Presence | Description
 ---|---|---
@@ -75,9 +75,9 @@ File Name | Presence | Description
 `gofs_versions.json` | OPTIONAL | Shows the different versions available for the same GOFS feed.
 `system_information.json` | REQUIRED | Defines the attributes of the on-demand service system (e.g. operator, location, year implemented, URL, contact info, timezone, etc.).
 `service_brands.json` | REQUIRED | Details the different on-demand service brands available to the riders.
-`vehicle_types.json` | Conditionally REQUIRED | Describes the vehicle types used for operating the on-demand services. This file is REQUIRED if any vehicle types are referenced in `zone_travel_rules.json`.
+`vehicle_types.json` | Conditionally REQUIRED | Describes the vehicle types used for operating the on-demand services. This file is REQUIRED if any vehicle types are referenced in `operating_rules.json`.
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
-`zone_travel_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone travels and operating hours.
+`operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendar.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
 
 ## File Requirements
@@ -144,7 +144,7 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `language` | REQUIRED | Language | The language that will be used throughout the rest of the files. It MUST match the value in the [system_information.json](#system_informationjson) file.
 \-&nbsp;`feeds` | REQUIRED | Array | An array of all of the feeds that are published by this auto-discovery file. Each element in the array is an object with the keys below.
-&emsp;\-&nbsp;`name` | REQUIRED | String | Key identifying the type of feed this is. The key MUST be the base file name defined in the spec for the corresponding feed type (`zones` for `zones.json` file, `zone_travel_rules` for `zone_travel_rules.json` file).
+&emsp;\-&nbsp;`name` | REQUIRED | String | Key identifying the type of feed this is. The key MUST be the base file name defined in the spec for the corresponding feed type (`zones` for `zones.json` file, `operating_rules` for `operating_rules.json` file).
 &emsp;\-&nbsp;`url` | REQUIRED | URL | URL for the feed. Note that the actual feed endpoints (urls) MAY NOT be defined in the `file_name.json` format. For example, a valid feed endpoint could end with `zones` instead of `zones.json`.
 
 ##### Example:
@@ -308,7 +308,7 @@ Field Name | Presence | Type | Description
 
 ### vehicle_types.json
 
-This file defines the vehicle types used for operating the on-demand services. This file is REQUIRED if any vehicle types are referenced in `zone_travel_rules.json`.
+This file defines the vehicle types used for operating the on-demand services. This file is REQUIRED if any vehicle types are referenced in `operating_rules.json`.
 
 The following fields are all attributes within the main "data" object for this feed.
 
@@ -433,22 +433,22 @@ Field Name | Presence | Type | Description
 }
 ```
 
-### zone_travel_rules.json
+### operating_rules.json
 
-This file contains travel rules enabling on-demand services between zones or in the same zone, according to operating hours. At least one zone travel rule MUST be defined. If `start_pickup_window`, `end_pickup_window`, and `end_dropoff_window` are not provided, it is assumed that the on-demand service is available at any hours of the day.
+This file contains operating rules enabling on-demand services between zones or within the same zone, according to time windows and calendars. At least one operating rule MUST be defined. If `start_pickup_window`, `end_pickup_window`, and `end_dropoff_window` are not provided, it is assumed that the on-demand service is available at any hours of the day.
 
 The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`zone_travel_rules` | REQUIRED | Array | Array that contains one object per travel rule as defined below.
+`operating_rules` | REQUIRED | Array | Array that contains one object per operating rule as defined below.
 \-&nbsp; `from_zone_id` | REQUIRED | ID | ID from a zone defined in `zones.json` representing the boarding zone for the current rule.
 \-&nbsp; `to_zone_id` | REQUIRED | ID | ID from a zone defined in `zones.json` representing the alighting zone for the current rule. `from_zone_id` and `to_zone_id` MAY reference the same zone.
 \-&nbsp; `start_pickup_window` | conditionally REQUIRED | Time | Time at which the pickup starts being available in `from_zone_id` defined in this array. If `start_pickup_window` is provided, either `end_pickup_window` or `end_dropoff_window` MUST also be provided.
 \-&nbsp; `end_pickup_window` | conditionally REQUIRED | Time | Time at which the pickup stops being available in `from_zone_id` defined in this array. If `end_pickup_window` is provided, `start_pickup_window` MUST be provided.
 \-&nbsp; `end_dropoff_window` | conditionally REQUIRED | Time | Time at which the drop off stops being available in `to_zone_id` defined in this array. Some services differ the end of the pickup time and the end of the drop off time (e.g.: The pickup time ends at 10PM in the origin zone but it is still possible to be dropped off in the destination zone until 10:30PM). If `end_dropoff_window` is provided, `start_pickup_window` MUST be provided.
 \-&nbsp; `calendars` | REQUIRED | Array | Array of calendar IDs from `calendar.json` defining the dates and days when the pickup and drop off occur.
-\-&nbsp; `brand_id` | OPTIONAL | ID | ID from a service brand defined in `service_brands.json`. If this field is not provided, the zone travel rule applies to every service brand defined in `service_brands.json`.
+\-&nbsp; `brand_id` | OPTIONAL | ID | ID from a service brand defined in `service_brands.json`. If this field is not provided, the operating rule applies to every service brand defined in `service_brands.json`.
 \-&nbsp; `vehicle_type_id` | REQUIRED | Array | Array of vehicle types used for delivering the on-demand service.
 
 
@@ -460,7 +460,7 @@ Field Name | Presence | Type | Description
   "ttl": 0,
   "version": "1.0",
   "data": {
-    "zone_travel_rules" : [
+    "operating_rules" : [
       {
         "from_zone_id": "zoneA",
         "to_zone_id": "zoneA",
