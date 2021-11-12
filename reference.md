@@ -11,10 +11,12 @@ This document defines the format and structure of the files that comprise a GOFS
 2. [Dataset Files](#dataset-files)
 3. [File Requirements](#file-requirements)
    - [Auto-discovery](#auto-discovery)
+   - [Versioning](#versioning)
    - [Localization](#localization)
    - [Output Format](#output-format)
 4. [Field Definitions](#field-definitions)
    - [gofs.json](#gofsjson)
+   - [gofs_versions.json](#gofs_versionsjson)
    - [system_information.json](#system_informationjson)
    - [service_brands.json](#service_brandsjson)
    - [vehicle_types](#vehicle_typesjson)
@@ -69,8 +71,9 @@ By default, on-demand services are not available anywhere. To represent on-deman
 
 File Name | Presence | Description
 ---|---|---
-`gofs.json` | REQUIRED | Auto-discovery file that links to all of the other files published by the system.
-`system_information.json` | REQUIRED | Defines the attributes of the on-demand service system (e.g. operator, location, year implemented, URL, contact info, timezone, etc.)
+`gofs.json` | REQUIRED | Auto-discovery file that links to all of the other files published by the data producer of the on-demand service system.
+`gofs_versions.json` | OPTIONAL | Shows the different versions available for the same GOFS feed.
+`system_information.json` | REQUIRED | Defines the attributes of the on-demand service system (e.g. operator, location, year implemented, URL, contact info, timezone, etc.).
 `service_brands.json` | REQUIRED | Details the different on-demand service brands available to the riders.
 `vehicle_types.json` | Conditionally REQUIRED | Describes the vehicle types used for operating the on-demand services. This file is REQUIRED if any vehicle types are referenced in `zone_travel_rules.json`.
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
@@ -83,20 +86,25 @@ File Name | Presence | Description
 
 Publishers SHOULD implement auto-discovery of GOFS feeds by linking to the location of the `gofs.json` auto-discovery endpoint.
 
-- The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_infomation.json` file.
-- This is referenced via a _link_ tag with the following format:
-  - `<link rel="gofs" type="application/json" href="https://www.example.com/data/gofs.json" />`
-  - References:
-    - https://microformats.org/wiki/existing-rel-values
-    - https://microformats.org/wiki/rel-faq#How_is_rel_used
-- An on-demand service's landing page MAY contain links to auto-discovery files for multiple systems.
+* The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_infomation.json` file.
+* This is referenced via a _link_ tag with the following format:
+  * `<link rel="gofs" type="application/json" href="https://www.example.com/data/gofs.json" />`
+  * References:
+    * https://microformats.org/wiki/existing-rel-values
+    * https://microformats.org/wiki/rel-faq#How_is_rel_used
+  * An on-demand service's landing page MAY contain links to auto-discovery files for multiple systems.
+
+### Versioning
+
+To enable the evolution of GOFS, including changes that would otherwise break backwards-compatibility with consuming applications, GOFS documentation is versioned. The GOFS versions are named "vX.Y" where `X.Y` is the version number.
+
+* The current release is v1.0.
 
 ### Localization
 
-* Each set of data files SHOULD be distributed in a single language as defined in system_information.json.
-* A system that wants to publish feeds in multiple languages SHOULD do so by publishing multiple distributions, such as:
-    * `https://www.example.com/data/en/system_information.json`
-    * `https://www.example.com/data/fr/system_information.json`
+Each set of data files SHOULD be distributed in a single language as defined in system_information.json. A system that wants to publish feeds in multiple languages SHOULD do so by publishing multiple distributions, such as:
+* `https://www.example.com/data/en/system_information.json`
+* `https://www.example.com/data/fr/system_information.json`
 
 ### Output Format
 
@@ -105,7 +113,7 @@ Every JSON file presented in this specification contains the same common header 
 Field Name | Presence | Type | Description
 ---|---|---|---
 `last_updated` | REQUIRED | Timestamp | Indicates the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
-`ttl` | REQUIRED | Non-negative integer | Number of seconds before the data in the feed will be updated again (0 if the data should always be refreshed).
+`ttl` | REQUIRED | Non-negative integer | Number of seconds before the data in the feed will be updated again. If the data should always be refreshed, the value SHOULD be `0`.
 `version`  | REQUIRED | String | GOFS version number to which the feed confirms, according to the versioning framework.
 `data` | REQUIRED | Object | Response data in the form of name:value pairs.
 
@@ -126,11 +134,11 @@ Field Name | Presence | Type | Description
 
 ## Field Definitions
 
-#### gofs.json
+### gofs.json
 
 The `gofs.json` discovery file SHOULD represent a single system or geographic area in which vehicles are operated. The location (URL) of the `gofs.json` file SHOULD be made available to the public using the specification's [auto-discovery](#auto-discovery) function.
 
-<p> The following fields are all attributes within the main "data" object for this feed.
+The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
@@ -171,6 +179,39 @@ Field Name | Presence | Type | Description
         }
       ]
     }
+  }
+}
+```
+### gofs_versions.json
+
+The `gofs_versions.json` SHOULD include all the versions available for the same GOFS feed representing the on-demand service system.
+
+The following fields are all attributes within the main "data" object for this feed.
+
+Field Name | Presence| Type | Defines
+---|---|---|---
+`versions` | REQUIRED | Array | Contains one object, as defined below, for each of the available versions of a feed. The array MUST be sorted by increasing version numbers.
+\-&nbsp;`version` | REQUIRED | String | Version number of the feed.
+\-&nbsp;`url` | REQUIRED | URL | URL of the corresponding `gofs.json` endpoint.
+
+##### Example:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 0,
+  "version": "1.0",
+  "data": {
+    "versions": [
+      {
+        "version": "1.0",
+        "url": "https://www.example.com/gofs/2/gofs"
+      },
+      {
+        "version": "X.Y",
+        "url": "https://www.example.com/gofs/3/gofs"
+      }
+    ]
   }
 }
 ```
