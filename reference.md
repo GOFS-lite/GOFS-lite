@@ -1,6 +1,6 @@
 ## General On-Demand Format Specification Reference
 
-This document defines the format and structure of the files that comprise a GOFS dataset.
+This document defines the format and structure of the files that comprise a GOFS-lite dataset.
 
 ## Table of Contents
 

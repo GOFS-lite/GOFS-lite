@@ -2,7 +2,7 @@
 
 General On-Demand Format Specification lite (GOFS-lite) defines a format for On-Demand services. It allows On-Demand service providers to define their service in a format that can be consumed by transport applications in an interoperable way. 
 
-GOFS supports on-demand services:
+GOFS-lite supports on-demand services:
 - without fixed routes
 - operated from curb-to-curb, stop-to-stop, or door-to-door
 - providing private and/or shared trips
