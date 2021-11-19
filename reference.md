@@ -84,7 +84,7 @@ File Name | Presence | Description
 
 ### Auto-Discovery
 
-Publishers SHOULD implement auto-discovery of GOFS feeds by linking to the location of the `gofs.json` auto-discovery endpoint.
+Publishers SHOULD implement auto-discovery of GOFS-lite feeds by linking to the location of the `gofs.json` auto-discovery endpoint.
 
 * The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_infomation.json` file.
 * This is referenced via a _link_ tag with the following format:
@@ -96,7 +96,7 @@ Publishers SHOULD implement auto-discovery of GOFS feeds by linking to the locat
 
 ### Versioning
 
-To enable the evolution of GOFS, including changes that would otherwise break backwards-compatibility with consuming applications, GOFS documentation is versioned. The GOFS versions are named "vX.Y" where `X.Y` is the version number.
+To enable the evolution of GOFS-lite, including changes that would otherwise break backwards-compatibility with consuming applications, GOFS-lite documentation is versioned. The GOFS-lite versions are named "vX.Y" where `X.Y` is the version number.
 
 * The current release is v1.0.
 
@@ -114,7 +114,7 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `last_updated` | REQUIRED | Timestamp | Indicates the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
 `ttl` | REQUIRED | Non-negative integer | Number of seconds before the data in the feed will be updated again. If the data should always be refreshed, the value SHOULD be `0`.
-`version`  | REQUIRED | String | GOFS version number to which the feed confirms, according to the versioning framework.
+`version`  | REQUIRED | String | GOFS-lite version number to which the feed confirms, according to the versioning framework.
 `data` | REQUIRED | Object | Response data in the form of name:value pairs.
 
 ##### Example:
@@ -184,7 +184,7 @@ Field Name | Presence | Type | Description
 ```
 ### gofs_versions.json
 
-The `gofs_versions.json` SHOULD include all the versions available for the same GOFS feed representing the on-demand service system.
+The `gofs_versions.json` SHOULD include all the versions available for the same GOFS-lite feed representing the on-demand service system.
 
 The following fields are all attributes within the main "data" object for this feed.
 
