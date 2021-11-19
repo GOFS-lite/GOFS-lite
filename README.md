@@ -1,4 +1,4 @@
-# GOFS
+# GOFS-lite
 
 General On-Demand Format Specification lite (GOFS-lite) defines a format for On-Demand services. It allows On-Demand service providers to define their service in a format that can be consumed by transport applications in an interoperable way. 
 
