@@ -58,12 +58,14 @@ Presence conditions applicable to fields and files:
     * MUST be persistent for a given entity (zone, plan, etc).
 - **Language** - An IETF BCP 47 language code. For an introduction to IETF BCP 47, refer to [http://www.rfc-editor.org/rfc/bcp/bcp47.txt](http://www.rfc-editor.org/rfc/bcp/bcp47.txt) and [http://www.w3.org/International/articles/language-tags/](http://www.w3.org/International/articles/language-tags/). <br> *Example: `en` for English, `en-US` for American English or `de` for German.*
 - **Non-negative Integer** - An integer greater than or equal to 0.
+- **Float** - A floating point number.
 - **Object** - A JSON element consisting of key-value pairs (fields).
 - **Phone number** - A phone number. The phone number MUST include the country calling code. The phone number MUST NOT include any punctuation marks or dialable text. <br> *Example: the North American phone number "(987) 654-3210" MUST be provided as `+19876543210`; the French phone number "01.23.45.67.89" MUST be provided as `+33123456789`*.
 - **String** - A text string of UTF-8 characters, which is aimed to be displayed and which must therefore be human readable.
 - **Time** - Time in the HH:MM:SS format (H:MM:SS is also accepted). The time is measured from "noon minus 12h" of the service day (effectively midnight except for days on which daylight savings time changes occur). For times occurring after midnight, enter the time as a value greater than 24:00:00 in HH:MM:SS local time for the day on which the trip schedule begins. <br> *Example: `14:30:00` for 2:30PM or `25:35:00` for 1:35AM on the next day.*
 - **Timezone** - TZ timezone from the [https://www.iana.org/time-zones](https://www.iana.org/time-zones). Timezone names never contain the space character but may contain an underscore. Refer to [http://en.wikipedia.org/wiki/List\_of\_tz\_zones](http://en.wikipedia.org/wiki/List\_of\_tz\_zones) for a list of valid values. <br> *Example: `Asia/Tokyo`, `America/Los_Angeles` or `Africa/Cairo`.*
 - **URL** - A fully qualified URL that includes http:// or https://, and any special characters in the URL must be correctly escaped. See the following [http://www.w3.org/Addressing/URL/4\_URI\_Recommentations.html](http://www.w3.org/Addressing/URL/4\_URI\_Recommentations.html) for a description of how to create fully qualified URL values.
+- **Currency code** - String containing 3 letters currency code as defined by ISO 4217. Ex: "CAD", "USD". 
 
 ## Dataset Files
 
@@ -79,6 +81,7 @@ File Name | Presence | Description
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendar.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
+`fares.json` | OPTIONAL | Defines static fare rules for a system. 
 
 ## File Requirements
 
@@ -528,6 +531,86 @@ Field Name | Presence | Type | Description
           "calendar_id": "labor_day"
           "start_date": "20210906",
           "end_date": "20210906"
+        }
+      ]
+    }
+  }
+}
+```
+
+### fares.json
+
+This file defines the base fare for a system. Each possible value that are 
+
+The following fields are all attributes within the main "data" object for this feed.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`fares` | REQUIRED | Array | Array that contains one object per fare defintion as defined below.
+\-&nbsp;`fare_id` | REQUIRED | ID | Unique identifier of the fare.
+\-&nbsp;`currency` | REQUIRED | Currency code | The currency of the fare.
+\-&nbsp;`kilometer` | OPTIONAL | Array | Array of objects defining how much cost a kilometer of travel between two interval. 
+\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Float | Interval in kilometers at which the amount of the row is applied, from start to end.
+\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in kilometers at which the amount defined in the object starts being charged.
+\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in kilometers at which the amount defined in the object stops being charged. 
+\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
+\-&nbsp;`minute` | OPTIONAL | Array | Array of objects defining how much cost a minute of service in the vehicle regardless if the vehicle is moving or not between two interval. 
+\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Float | Interval in minute at which the amount of the row is applied, from start to end.
+\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object starts being charged.
+\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object stops being charged. 
+\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
+\-&nbsp;`active_minute` | OPTIONAL | Array | Array of objects defining how much cost a minute of service while the vehicle is actively moving between two interval. 
+\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Float | Interval in minute at which the amount of the row is applied, from start to end.
+\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object starts being charged.
+\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object stops being charged. 
+\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
+\-&nbsp;`idle_minute` | OPTIONAL | Array | Array of objects defining how much cost a minute of service while the vehicle is not moving or stopped between two interval. 
+\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Float | Interval in minute at which the amount of the row is applied, from start to end.
+\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object starts being charged.
+\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object stops being charged. 
+\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
+\-&nbsp;`rider` | OPTIONAL | Array | Array of objects defining how much a rider traveling in the on-demand service between two interval. 
+\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Non-negative Integer | Interval in number of riders at which the amount of the row is applied, from start to end.
+\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in number of riders at which the amount defined in the object starts being charged.
+\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in number of riders at which the amount defined in the object stops being charged. 
+\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
+\-&nbsp;`luggage` | OPTIONAL | Array | Array of objects defining how much a luggage traveling in the on-demand service between two interval. 
+\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Non-negative Integer | Interval in number of luggage at which the amount of the row is applied, from start to end.
+\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in number of luggage at which the amount defined in the object starts being charged.
+\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in number of luggage at which the amount defined in the object stops being charged. 
+\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
+\-&nbsp;`pet` | OPTIONAL | Array | Array of objects defining how much a pet traveling in the on-demand service between two interval. 
+\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Non-negative Integer | Interval in number of pet at which the amount of the row is applied, from start to end.
+\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in number of pet at which the amount defined in the object starts being charged.
+\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in number of pet at which the amount defined in the object stops being charged. 
+\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
+
+##### Example:
+
+Imagine a distance-based fare. The first 10 kilometers cost 3.30 CAD per kilometer, and are charged every 250 meters. All other kilometers cost 4.30 CAD, and are charged every 500 meters. This situation would be represented by:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "fares": [
+        {
+          "fare_id": "RegularPrice",
+          "currency": "CAD",
+          "kilometer": [
+            {
+              "interval": 0.25,
+              "end": 10,
+              "amount": 3.30,
+            },
+            {
+              "interval": 0.5,
+              "start": 10,
+              "amount": 4.30,
+            }
+          ]
         }
       ]
     }
