@@ -64,6 +64,8 @@ Presence conditions applicable to fields and files:
 - **Time** - Time in the HH:MM:SS format (H:MM:SS is also accepted). The time is measured from "noon minus 12h" of the service day (effectively midnight except for days on which daylight savings time changes occur). For times occurring after midnight, enter the time as a value greater than 24:00:00 in HH:MM:SS local time for the day on which the trip schedule begins. <br> *Example: `14:30:00` for 2:30PM or `25:35:00` for 1:35AM on the next day.*
 - **Timezone** - TZ timezone from the [https://www.iana.org/time-zones](https://www.iana.org/time-zones). Timezone names never contain the space character but may contain an underscore. Refer to [http://en.wikipedia.org/wiki/List\_of\_tz\_zones](http://en.wikipedia.org/wiki/List\_of\_tz\_zones) for a list of valid values. <br> *Example: `Asia/Tokyo`, `America/Los_Angeles` or `Africa/Cairo`.*
 - **URL** - A fully qualified URL that includes http:// or https://, and any special characters in the URL must be correctly escaped. See the following [http://www.w3.org/Addressing/URL/4\_URI\_Recommentations.html](http://www.w3.org/Addressing/URL/4\_URI\_Recommentations.html) for a description of how to create fully qualified URL values.
+* **Latitude** - WGS84 latitude in decimal degrees. The value MUST be greater than or equal to -90.0 and less than or equal to 90.0. Example: `41.890169` for the Colosseum in Rome.
+* **Longitude** - WGS84 longitude in decimal degrees. The value MUST be greater than or equal to -180.0 and less than or equal to 180.0. Example: `12.492269` for the Colosseum in Rome.
 
 ## Dataset Files
 
@@ -79,6 +81,8 @@ File Name | Presence | Description
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendar.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
+`wait_time.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_time.json` or `get_wait_time` MUST be provided.
+`get_wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_time.json` or `get_wait_time` MUST be provided.
 
 ## File Requirements
 
@@ -530,6 +534,81 @@ Field Name | Presence | Type | Description
           "end_date": "20210906"
         }
       ]
+    }
+  }
+}
+```
+
+### wait_time.json
+
+This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `get_wait_time` method can be used. `wait_time.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
+
+The following fields are all attributes within the main "data" object for this feed.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`wait_time` | REQUIRED | Array | Array that contains one object per calendar as defined below.
+\-&nbsp;`s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `zone_ids` field is not populated. Forbidden otherwise.
+\-&nbsp;`zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `s2_cells` field is not populated. Forbidden otherwise.
+\-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
+
+##### Example:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "wait_time": [
+        {
+          "s2_cells": ["89c25998b" , "89c25998d"],
+          "zone_ids": null,
+          "wait_time": 300,
+        },
+        {
+          "s2_cells": null,
+          "zone_ids": ["zoneA"],
+          "wait_time": 300,
+        },
+      ]
+    }
+  }
+}
+```
+
+### get_wait_time
+
+This dynamic query provides wait time for specific location. To provide wait times to consumers, either this method or `wait_time.json` method can be used. `get_wait_time` allows more precise queries but requires a call on every interaction by users. 
+
+The request must have the following query parameters. 
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`pickup_latitude` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
+`pickup_longitude` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
+
+The following fields are all attributes within the main "data" object for this query response.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
+
+##### Examples:
+
+###### Query: 
+
+`https://www.example.com/gofs/1/en/get_wait_time?pickup_latitude=45.60&pickup_longitude=-73.30`
+
+###### Response: 
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "wait_time": 300
     }
   }
 }
