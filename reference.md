@@ -23,6 +23,8 @@ This document defines the format and structure of the files that comprise a GOFS
    - [zones.json](#zonesjson)
    - [operating_rules.json](#operating_rulesjson)
    - [calendar.json](#calendarjson)
+   - [wait_time.json](#wait_timejson)
+   - [get_wait_time](#get_wait_time)
 
 
 ## Document Conventions
@@ -551,6 +553,7 @@ Field Name | Presence | Type | Description
 \-&nbsp;`s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `zone_ids` field is not populated. Forbidden otherwise.
 \-&nbsp;`zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `s2_cells` field is not populated. Forbidden otherwise.
 \-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
+\-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
 
 ##### Example:
 
@@ -587,6 +590,7 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `pickup_latitude` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
 `pickup_longitude` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
+`brand_id` | Conditionally REQUIRED | ID | Brand ID from `service_brands.json` to define the wait time is requested for which brand. REQUIRED if more than one service brand is available.  
 
 The following fields are all attributes within the main "data" object for this query response.
 
@@ -598,7 +602,7 @@ Field Name | Presence | Type | Description
 
 ###### Query: 
 
-`https://www.example.com/gofs/1/en/get_wait_time?pickup_latitude=45.60&pickup_longitude=-73.30`
+`https://www.example.com/gofs/1/en/get_wait_time?pickup_latitude=45.60&pickup_longitude=-73.30&brand_id=regular`
 
 ###### Response: 
 
