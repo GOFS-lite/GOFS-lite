@@ -540,7 +540,14 @@ Field Name | Presence | Type | Description
 
 ### fares.json
 
-This file defines the base fare for a system. Each possible value that are 
+This file defines the base fare for a system. Each possible value that are contains an array of Fare objects as defined below. 
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`interval` | OPTIONAL | Float | Interval in unit of the parent key at which the amount of the row is applied, from start to end.
+`start` | OPTIONAL | Non-negative Integer | The value in unit of the parent key at which the amount defined in the object starts being charged.
+`end` | OPTIONAL | Non-negative Integer | The value in unit of the parent key at which the amount defined in the object stops being charged. 
+`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of the parent key.
 
 The following fields are all attributes within the main "data" object for this feed.
 
@@ -549,41 +556,12 @@ Field Name | Presence | Type | Description
 `fares` | REQUIRED | Array | Array that contains one object per fare defintion as defined below.
 \-&nbsp;`fare_id` | REQUIRED | ID | Unique identifier of the fare.
 \-&nbsp;`currency` | REQUIRED | Currency code | The currency of the fare.
-\-&nbsp;`kilometer` | OPTIONAL | Array | Array of objects defining how much cost a kilometer of travel between two interval. 
-\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Float | Interval in kilometers at which the amount of the row is applied, from start to end.
-\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in kilometers at which the amount defined in the object starts being charged.
-\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in kilometers at which the amount defined in the object stops being charged. 
-\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
-\-&nbsp;`minute` | OPTIONAL | Array | Array of objects defining how much cost a minute of service in the vehicle regardless if the vehicle is moving or not between two interval. 
-\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Float | Interval in minute at which the amount of the row is applied, from start to end.
-\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object starts being charged.
-\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object stops being charged. 
-\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
-\-&nbsp;`active_minute` | OPTIONAL | Array | Array of objects defining how much cost a minute of service while the vehicle is actively moving between two interval. 
-\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Float | Interval in minute at which the amount of the row is applied, from start to end.
-\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object starts being charged.
-\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object stops being charged. 
-\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
-\-&nbsp;`idle_minute` | OPTIONAL | Array | Array of objects defining how much cost a minute of service while the vehicle is not moving or stopped between two interval. 
-\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Float | Interval in minute at which the amount of the row is applied, from start to end.
-\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object starts being charged.
-\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in minute at which the amount defined in the object stops being charged. 
-\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
-\-&nbsp;`rider` | OPTIONAL | Array | Array of objects defining how much a rider traveling in the on-demand service between two interval. 
-\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Non-negative Integer | Interval in number of riders at which the amount of the row is applied, from start to end.
-\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in number of riders at which the amount defined in the object starts being charged.
-\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in number of riders at which the amount defined in the object stops being charged. 
-\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
-\-&nbsp;`luggage` | OPTIONAL | Array | Array of objects defining how much a luggage traveling in the on-demand service between two interval. 
-\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Non-negative Integer | Interval in number of luggage at which the amount of the row is applied, from start to end.
-\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in number of luggage at which the amount defined in the object starts being charged.
-\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in number of luggage at which the amount defined in the object stops being charged. 
-\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
-\-&nbsp;`pet` | OPTIONAL | Array | Array of objects defining how much a pet traveling in the on-demand service between two interval. 
-\-&nbsp;\-&nbsp;`interval` | OPTIONAL | Non-negative Integer | Interval in number of pet at which the amount of the row is applied, from start to end.
-\-&nbsp;\-&nbsp;`start` | OPTIONAL | Non-negative Integer | The value in number of pet at which the amount defined in the object starts being charged.
-\-&nbsp;\-&nbsp;`end` | OPTIONAL | Non-negative Integer | The value in number of pet at which the amount defined in the object stops being charged. 
-\-&nbsp;\-&nbsp;`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of fare_variable_type.
+\-&nbsp;`kilometer` | OPTIONAL | Array | Array of Fare objects defining how much cost a kilometer of travel between two interval. 
+\-&nbsp;`minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service in the vehicle regardless if the vehicle is moving or not between two interval. 
+\-&nbsp;`active_minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service while the vehicle is actively moving between two interval. 
+\-&nbsp;`idle_minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service while the vehicle is not moving or stopped between two interval. 
+\-&nbsp;`rider` | OPTIONAL | Array | Array of Fare objects defining how much a rider traveling in the on-demand service between two interval. 
+\-&nbsp;`luggage` | OPTIONAL | Array | Array of Fare objects defining how much a luggage traveling in the on-demand service between two interval. 
 
 ##### Example:
 
