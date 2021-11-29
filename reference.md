@@ -549,7 +549,7 @@ The following fields are all attributes within the main "data" object for this f
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`wait_time` | REQUIRED | Array | Array that contains one object per calendar as defined below.
+`wait_time` | REQUIRED | Array | Array that contains one object per wait time as defined below.
 \-&nbsp;`s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `zone_ids` field is not populated. Forbidden otherwise.
 \-&nbsp;`zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `s2_cells` field is not populated. Forbidden otherwise.
 \-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
