@@ -552,7 +552,7 @@ Field Name | Presence | Type | Description
 `wait_time` | REQUIRED | Array | Array that contains one object per wait time as defined below.
 \-&nbsp;`s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `zone_ids` field is not populated. Forbidden otherwise.
 \-&nbsp;`zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `s2_cells` field is not populated. Forbidden otherwise.
-\-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
+\-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
 \-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
 
 ##### Example:
