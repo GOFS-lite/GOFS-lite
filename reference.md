@@ -23,7 +23,7 @@ This document defines the format and structure of the files that comprise a GOFS
    - [zones.json](#zonesjson)
    - [operating_rules.json](#operating_rulesjson)
    - [calendar.json](#calendarjson)
-   - [wait_time.json](#wait_timejson)
+   - [wait_times.json](#wait_timejson)
    - [wait_time](#wait_time)
 
 
@@ -83,8 +83,8 @@ File Name | Presence | Description
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendar.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
-`wait_time.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_time.json` or `wait_time` MUST be provided.
-`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_time.json` or `wait_time` MUST be provided.
+`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided.
+`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided.
 
 ## File Requirements
 
@@ -541,9 +541,9 @@ Field Name | Presence | Type | Description
 }
 ```
 
-### wait_time.json
+### wait_times.json
 
-This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_time.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
+This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
 
 The following fields are all attributes within the main "data" object for this feed.
 
@@ -582,7 +582,7 @@ Field Name | Presence | Type | Description
 
 ### wait_time
 
-This dynamic query provides wait time for specific location. To provide wait times to consumers, either this method or `wait_time.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users. 
+This dynamic query provides wait time for specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users. 
 
 The request must have the following query parameters. 
 
