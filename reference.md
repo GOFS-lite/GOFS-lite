@@ -588,8 +588,8 @@ The request must have the following query parameters.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`pickup_latitude` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
-`pickup_longitude` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
+`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
+`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
 `brand_id` | Conditionally REQUIRED | ID | Brand ID from `service_brands.json` to define the wait time is requested for which brand. REQUIRED if more than one service brand is available.  
 
 The following fields are all attributes within the main "data" object for this query response.
@@ -602,7 +602,7 @@ Field Name | Presence | Type | Description
 
 ###### Query: 
 
-`https://www.example.com/gofs/1/en/wait_time?pickup_latitude=45.60&pickup_longitude=-73.30&brand_id=regular`
+`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular`
 
 ###### Response: 
 
