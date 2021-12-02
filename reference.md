@@ -596,7 +596,9 @@ The following fields are all attributes within the main "data" object for this q
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
+`wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`
+- `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
+- `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
 
 ##### Examples:
 
@@ -612,8 +614,16 @@ Field Name | Presence | Type | Description
   "ttl": 86400,
   "version": "1.0",
   "data": {
-    "wait_time": 300
-    }
+    "wait_times": [
+      {
+        "brand_id": "regular_ride",
+        "wait_time": 300
+      },
+      {
+        "brand_id": "large_ride",
+        "wait_time": 600
+      }
+    ]
   }
 }
 ```
