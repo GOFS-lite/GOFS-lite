@@ -60,12 +60,14 @@ Presence conditions applicable to fields and files:
     * MUST be persistent for a given entity (zone, plan, etc).
 - **Language** - An IETF BCP 47 language code. For an introduction to IETF BCP 47, refer to [http://www.rfc-editor.org/rfc/bcp/bcp47.txt](http://www.rfc-editor.org/rfc/bcp/bcp47.txt) and [http://www.w3.org/International/articles/language-tags/](http://www.w3.org/International/articles/language-tags/). <br> *Example: `en` for English, `en-US` for American English or `de` for German.*
 - **Non-negative Integer** - An integer greater than or equal to 0.
+- **Float** - A floating point number.
 - **Object** - A JSON element consisting of key-value pairs (fields).
 - **Phone number** - A phone number. The phone number MUST include the country calling code. The phone number MUST NOT include any punctuation marks or dialable text. <br> *Example: the North American phone number "(987) 654-3210" MUST be provided as `+19876543210`; the French phone number "01.23.45.67.89" MUST be provided as `+33123456789`*.
 - **String** - A text string of UTF-8 characters, which is aimed to be displayed and which must therefore be human readable.
 - **Time** - Time in the HH:MM:SS format (H:MM:SS is also accepted). The time is measured from "noon minus 12h" of the service day (effectively midnight except for days on which daylight savings time changes occur). For times occurring after midnight, enter the time as a value greater than 24:00:00 in HH:MM:SS local time for the day on which the trip schedule begins. <br> *Example: `14:30:00` for 2:30PM or `25:35:00` for 1:35AM on the next day.*
 - **Timezone** - TZ timezone from the [https://www.iana.org/time-zones](https://www.iana.org/time-zones). Timezone names never contain the space character but may contain an underscore. Refer to [http://en.wikipedia.org/wiki/List\_of\_tz\_zones](http://en.wikipedia.org/wiki/List\_of\_tz\_zones) for a list of valid values. <br> *Example: `Asia/Tokyo`, `America/Los_Angeles` or `Africa/Cairo`.*
 - **URL** - A fully qualified URL that includes http:// or https://, and any special characters in the URL must be correctly escaped. See the following [http://www.w3.org/Addressing/URL/4\_URI\_Recommentations.html](http://www.w3.org/Addressing/URL/4\_URI\_Recommentations.html) for a description of how to create fully qualified URL values.
+- **Currency code** - String containing 3 letters currency code as defined by ISO 4217. Ex: "CAD", "USD". 
 * **Latitude** - WGS84 latitude in decimal degrees. The value MUST be greater than or equal to -90.0 and less than or equal to 90.0. Example: `41.890169` for the Colosseum in Rome.
 * **Longitude** - WGS84 longitude in decimal degrees. The value MUST be greater than or equal to -180.0 and less than or equal to 180.0. Example: `12.492269` for the Colosseum in Rome.
 
@@ -83,6 +85,7 @@ File Name | Presence | Description
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendar.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
+`fares.json` | OPTIONAL | Defines static fare rules for a system. 
 `wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided.
 `wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided.
 
@@ -541,6 +544,65 @@ Field Name | Presence | Type | Description
 }
 ```
 
+### fares.json
+
+This file defines the base fare for a system. Each possible value that are contains an array of Fare objects as defined below. 
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`interval` | OPTIONAL | Float | Interval in unit of the parent key at which the amount of the row is applied, from start to end.
+`start` | OPTIONAL | Non-negative Integer | The value in unit of the parent key at which the amount defined in the object starts being charged.
+`end` | OPTIONAL | Non-negative Integer | The value in unit of the parent key at which the amount defined in the object stops being charged. 
+`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of the parent key.
+
+The following fields are all attributes within the main "data" object for this feed.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+
+`fares` | REQUIRED | Array | Array that contains one object per fare defintion as defined below.
+\-&nbsp;`fare_id` | REQUIRED | ID | Unique identifier of the fare.
+\-&nbsp;`currency` | REQUIRED | Currency code | The currency of the fare.
+\-&nbsp;`kilometer` | OPTIONAL | Array | Array of Fare objects defining how much cost a kilometer of travel between two interval. 
+\-&nbsp;`minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service in the vehicle regardless if the vehicle is moving or not between two interval. 
+\-&nbsp;`active_minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service while the vehicle is actively moving between two interval. 
+\-&nbsp;`idle_minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service while the vehicle is not moving or stopped between two interval. 
+\-&nbsp;`rider` | OPTIONAL | Array | Array of Fare objects defining how much a rider traveling in the on-demand service between two interval. 
+\-&nbsp;`luggage` | OPTIONAL | Array | Array of Fare objects defining how much a luggage traveling in the on-demand service between two interval. 
+
+##### Example:
+
+Imagine a distance-based fare. The first 10 kilometers cost 3.30 CAD per kilometer, and are charged every 250 meters. All other kilometers cost 4.30 CAD, and are charged every 500 meters. This situation would be represented by:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "fares": [
+        {
+          "fare_id": "RegularPrice",
+          "currency": "CAD",
+          "kilometer": [
+            {
+              "interval": 0.25,
+              "end": 10,
+              "amount": 3.30,
+            },
+            {
+              "interval": 0.5,
+              "start": 10,
+              "amount": 4.30,
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
 ### wait_times.json
 
 This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
@@ -573,7 +635,7 @@ Field Name | Presence | Type | Description
           "s2_cells": null,
           "zone_ids": ["zoneA"],
           "wait_time": 300,
-        },
+        }
       ]
     }
   }
