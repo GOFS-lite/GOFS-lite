@@ -23,6 +23,8 @@ This document defines the format and structure of the files that comprise a GOFS
    - [zones.json](#zonesjson)
    - [operating_rules.json](#operating_rulesjson)
    - [calendar.json](#calendarjson)
+   - [wait_times.json](#wait_timejson)
+   - [wait_time](#wait_time)
 
 
 ## Document Conventions
@@ -65,7 +67,12 @@ Presence conditions applicable to fields and files:
 - **Time** - Time in the HH:MM:SS format (H:MM:SS is also accepted). The time is measured from "noon minus 12h" of the service day (effectively midnight except for days on which daylight savings time changes occur). For times occurring after midnight, enter the time as a value greater than 24:00:00 in HH:MM:SS local time for the day on which the trip schedule begins. <br> *Example: `14:30:00` for 2:30PM or `25:35:00` for 1:35AM on the next day.*
 - **Timezone** - TZ timezone from the [https://www.iana.org/time-zones](https://www.iana.org/time-zones). Timezone names never contain the space character but may contain an underscore. Refer to [http://en.wikipedia.org/wiki/List\_of\_tz\_zones](http://en.wikipedia.org/wiki/List\_of\_tz\_zones) for a list of valid values. <br> *Example: `Asia/Tokyo`, `America/Los_Angeles` or `Africa/Cairo`.*
 - **URL** - A fully qualified URL that includes http:// or https://, and any special characters in the URL must be correctly escaped. See the following [http://www.w3.org/Addressing/URL/4\_URI\_Recommentations.html](http://www.w3.org/Addressing/URL/4\_URI\_Recommentations.html) for a description of how to create fully qualified URL values.
+<<<<<<< HEAD
 - **Currency code** - String containing 3 letters currency code as defined by ISO 4217. Ex: "CAD", "USD". 
+=======
+* **Latitude** - WGS84 latitude in decimal degrees. The value MUST be greater than or equal to -90.0 and less than or equal to 90.0. Example: `41.890169` for the Colosseum in Rome.
+* **Longitude** - WGS84 longitude in decimal degrees. The value MUST be greater than or equal to -180.0 and less than or equal to 180.0. Example: `12.492269` for the Colosseum in Rome.
+>>>>>>> main
 
 ## Dataset Files
 
@@ -81,7 +88,12 @@ File Name | Presence | Description
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendar.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
+<<<<<<< HEAD
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
+=======
+`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided.
+`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided.
+>>>>>>> main
 
 ## File Requirements
 
@@ -553,6 +565,7 @@ The following fields are all attributes within the main "data" object for this f
 
 Field Name | Presence | Type | Description
 ---|---|---|---
+
 `fares` | REQUIRED | Array | Array that contains one object per fare defintion as defined below.
 \-&nbsp;`fare_id` | REQUIRED | ID | Unique identifier of the fare.
 \-&nbsp;`currency` | REQUIRED | Currency code | The currency of the fare.
@@ -592,6 +605,93 @@ Imagine a distance-based fare. The first 10 kilometers cost 3.30 CAD per kilomet
         }
       ]
     }
+  }
+}
+```
+
+### wait_times.json
+
+This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
+
+The following fields are all attributes within the main "data" object for this feed.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`wait_time` | REQUIRED | Array | Array that contains one object per wait time as defined below.
+\-&nbsp;`s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `zone_ids` field is not populated. Forbidden otherwise.
+\-&nbsp;`zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `s2_cells` field is not populated. Forbidden otherwise.
+\-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
+\-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
+
+##### Example:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "wait_time": [
+        {
+          "s2_cells": ["89c25998b" , "89c25998d"],
+          "zone_ids": null,
+          "wait_time": 300,
+        },
+        {
+          "s2_cells": null,
+          "zone_ids": ["zoneA"],
+          "wait_time": 300,
+        }
+      ]
+    }
+  }
+}
+```
+
+### wait_time
+
+This dynamic query provides wait time for specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users. 
+
+The request must have the following query parameters. 
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
+`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
+`brand_id` | Conditionally REQUIRED | ID | Brand ID from `service_brands.json` to define the wait time is requested for which brand. REQUIRED if more than one service brand is available.  
+
+The following fields are all attributes within the main "data" object for this query response.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`
+- `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
+- `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
+
+##### Examples:
+
+###### Query: 
+
+`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular`
+
+###### Response: 
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "wait_times": [
+      {
+        "brand_id": "regular_ride",
+        "wait_time": 300
+      },
+      {
+        "brand_id": "large_ride",
+        "wait_time": 600
+      }
+    ]
   }
 }
 ```
