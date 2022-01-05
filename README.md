@@ -6,11 +6,16 @@ GOFS-lite, as an offshoot of the GOFS project, is meant to be compatible with GT
 
 GOFS-lite supports on-demand services:
 - without fixed routes
-- operated from curb-to-curb, stop-to-stop, or door-to-door
-- providing private and/or shared trips
-- that can be either ordered in real time or booked in advance.
+- operated from zone to zone
+- available to anyone 
+- that can be ordered in real time.
 Examples of supported services include: ridehail (like taxis or Uber), on-demand microtransit (like [Metro Micro](https://micro.metro.net) or [DRT On Demand](https://www.durhamregiontransit.com/en/travelling-with-us/planning-your-travel.aspx#On%20Demand)) and paratransit. 
 
 Unsupported services include fixed or flexible public transit services where a schedule is defined (GTFS and GTFS-Flex support those use cases).
+
+Future GOFS-lite extensions may support on-demand services:
+- operated from curb-to-curb, stop-to-stop, or door-to-door
+- providing private and/or shared trips
+- that can be booked in advance.
 
 GOFS-lite is a work in progress, there are currently important missing functionalities like accurate pricing, travel time estimations, etc. Questions or comments can be sent to gofs-lite@transitapp.com
