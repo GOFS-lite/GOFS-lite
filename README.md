@@ -9,6 +9,7 @@ GOFS-lite supports on-demand services:
 - operated from zone to zone
 - available to anyone 
 - that can be ordered in real time.
+
 Examples of supported services include: ridehail (like taxis or Uber), on-demand microtransit (like [Metro Micro](https://micro.metro.net) or [DRT On Demand](https://www.durhamregiontransit.com/en/travelling-with-us/planning-your-travel.aspx#On%20Demand)) and paratransit. 
 
 Unsupported services include fixed or flexible public transit services where a schedule is defined (GTFS and GTFS-Flex support those use cases).
