@@ -559,7 +559,6 @@ The following fields are all attributes within the main "data" object for this f
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-
 `fares` | REQUIRED | Array | Array that contains one object per fare defintion as defined below.
 \-&nbsp;`fare_id` | REQUIRED | ID | Unique identifier of the fare.
 \-&nbsp;`currency` | REQUIRED | Currency code | The currency of the fare.
