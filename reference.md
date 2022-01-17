@@ -23,6 +23,7 @@ This document defines the format and structure of the files that comprise a GOFS
    - [zones.json](#zonesjson)
    - [operating_rules.json](#operating_rulesjson)
    - [calendar.json](#calendarjson)
+   - [fares.json](#faresjson)
    - [wait_times.json](#wait_timejson)
    - [wait_time](#wait_time)
 
