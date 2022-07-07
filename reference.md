@@ -44,6 +44,7 @@ Presence conditions applicable to fields and files:
 * REQUIRED - The file or the field MUST be included in the dataset, and a value MUST be provided in the field for each record.
 * OPTIONAL - The file or the field MAY be omitted from the dataset, and a value MAY be omitted in the field for any record.
 * Conditionally REQUIRED - The file or the field is REQUIRED under certain conditions, which are outlined in the file or field description. Outside of these conditions, the file or the field is OPTIONAL.
+* Conditionally OPTIONAL - The file or the field is OPTIONAL under certain conditions, which are outlined in the file or field description. Outside of these conditions, the file or the field is forbidden.
 
 ### Field Types
 
@@ -612,8 +613,10 @@ The following fields are all attributes within the main "data" object for this f
 Field Name | Presence | Type | Description
 ---|---|---|---
 `wait_times` | REQUIRED | Array | Array that contains one object per wait time as defined below.
-\-&nbsp;`s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `zone_ids` field is not populated. Forbidden otherwise.
-\-&nbsp;`zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `s2_cells` field is not populated. Forbidden otherwise.
+\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. Forbidden otherwise.
+\-&nbsp;`to_s2_cells` | Conditionally OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. Forbidden otherwise.
+\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. Forbidden otherwise.
+\-&nbsp;`to_zone_ids` | Conditionally OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. Forbidden otherwise.
 \-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
 \-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
 
@@ -627,14 +630,25 @@ Field Name | Presence | Type | Description
   "data": {
     "wait_times": [
         {
-          "s2_cells": ["89c25998b" , "89c25998d"],
-          "zone_ids": null,
+          "from_s2_cells": ["89c25998b" , "89c25998d"],
+          "to_s2_cells": null,
+          "from_zone_ids": null,
+          "to_zone_ids": null,
           "wait_time": 300,
         },
         {
-          "s2_cells": null,
-          "zone_ids": ["zoneA"],
+          "from_s2_cells": null,
+          "to_s2_cells": null,
+          "from_zone_ids": ["zoneA"],
+          "to_zone_ids": null,
           "wait_time": 300,
+        },
+        {
+          "from_s2_cells": null,
+          "to_s2_cells": null,
+          "from_zone_ids": ["zoneA"],
+          "to_zone_ids": ["zoneB"],
+          "wait_time": 200,
         }
       ]
     }
@@ -652,6 +666,8 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
 `pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
+`drop_off_lat` | OPTIONAL | Latitude | Latitude of the location where the user will be dropped off. 
+`drop_off_lon` | OPTIONAL | Longitude | Longitude of the location where the user will be dropped off. 
 `brand_id` | Conditionally REQUIRED | ID | Brand ID from `service_brands.json` to define the wait time is requested for which brand. REQUIRED if more than one service brand is available.  
 
 The following fields are all attributes within the main "data" object for this query response.
