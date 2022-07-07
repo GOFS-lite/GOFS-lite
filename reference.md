@@ -22,7 +22,7 @@ This document defines the format and structure of the files that comprise a GOFS
    - [vehicle_types](#vehicle_typesjson)
    - [zones.json](#zonesjson)
    - [operating_rules.json](#operating_rulesjson)
-   - [calendar.json](#calendarjson)
+   - [calendars.json](#calendarsjson)
    - [fares.json](#faresjson)
    - [wait_times.json](#wait_timejson)
    - [wait_time](#wait_time)
@@ -85,7 +85,7 @@ File Name | Presence | Description
 `vehicle_types.json` | Conditionally REQUIRED | Describes the vehicle types used for operating the on-demand services. This file is REQUIRED if any vehicle types are referenced in `operating_rules.json`.
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
-`calendar.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
+`calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
 `wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided.
 `wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided.
@@ -457,7 +457,7 @@ Field Name | Presence | Type | Description
 \-&nbsp; `start_pickup_window` | conditionally REQUIRED | Time | Time at which the pickup starts being available in `from_zone_id` defined in this array. If `start_pickup_window` is provided, either `end_pickup_window` or `end_dropoff_window` MUST also be provided.
 \-&nbsp; `end_pickup_window` | conditionally REQUIRED | Time | Time at which the pickup stops being available in `from_zone_id` defined in this array. If `end_pickup_window` is provided, `start_pickup_window` MUST be provided.
 \-&nbsp; `end_dropoff_window` | conditionally REQUIRED | Time | Time at which the drop off stops being available in `to_zone_id` defined in this array. Some services differ the end of the pickup time and the end of the drop off time (e.g.: The pickup time ends at 10PM in the origin zone but it is still possible to be dropped off in the destination zone until 10:30PM). If `end_dropoff_window` is provided, `start_pickup_window` MUST be provided.
-\-&nbsp; `calendars` | REQUIRED | Array | Array of calendar IDs from `calendar.json` defining the dates and days when the pickup and drop off occur.
+\-&nbsp; `calendars` | REQUIRED | Array | Array of calendar IDs from `calendars.json` defining the dates and days when the pickup and drop off occur.
 \-&nbsp; `brand_id` | OPTIONAL | ID | ID from a service brand defined in `service_brands.json`. If this field is not provided, the operating rule applies to every service brand defined in `service_brands.json`.
 \-&nbsp; `vehicle_type_id` | REQUIRED | Array | Array of vehicle types used for delivering the on-demand service.
 
@@ -486,7 +486,7 @@ Field Name | Presence | Type | Description
 }
 ```
 
-### calendar.json
+### calendars.json
 
 This file defines the dates and days when on-demand services are available to the riders.
 
@@ -611,7 +611,7 @@ The following fields are all attributes within the main "data" object for this f
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`wait_time` | REQUIRED | Array | Array that contains one object per wait time as defined below.
+`wait_times` | REQUIRED | Array | Array that contains one object per wait time as defined below.
 \-&nbsp;`s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `zone_ids` field is not populated. Forbidden otherwise.
 \-&nbsp;`zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `s2_cells` field is not populated. Forbidden otherwise.
 \-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
@@ -625,7 +625,7 @@ Field Name | Presence | Type | Description
   "ttl": 86400,
   "version": "1.0",
   "data": {
-    "wait_time": [
+    "wait_times": [
         {
           "s2_cells": ["89c25998b" , "89c25998d"],
           "zone_ids": null,
