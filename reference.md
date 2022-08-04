@@ -715,26 +715,26 @@ The following fields are all attributes within the main "data" object for this f
 
 
 | Field Name | Presence | Type |Description |
-| ---------- | ---- | -------- | ----------- |
-| `booking_rules` |  REQUIRED  | Array | Array that contains one object per booking rules as defined below. |
+ ---------- | ---- | -------- | ----------- |
+ `booking_rules` |  REQUIRED  | Array | Array that contains one object per booking rules as defined below. |
 \-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. Forbidden otherwise.
 \-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. Forbidden otherwise.
 \-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. Forbidden otherwise.
 \-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. Forbidden otherwise.
-| \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Up to same-day booking with advance notice.<br>`1` - Up to prior day(s) booking. |
-| \-&nbsp; `prior_notice_duration_min` | Conditionally REQUIRED | Integer | Minimum number of minutes before travel to make the request. REQUIRED for `booking_type=0`. Forbidden otherwise. |
-| \-&nbsp; `prior_notice_duration_max` | OPTIONAL | Integer | Maximum number of minutes before travel to make the booking request.  OPTIONAL for `booking_type=0`. FORBIDDEN otherwise.|
-| \-&nbsp; `prior_notice_last_day` | Conditionally REQUIRED | Integer | Last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_day=1`). REQUIRED for `booking_type=1`. FORBIDDEN otherwise.|
-| \-&nbsp; `prior_notice_last_time` | Conditionally REQUIRED | Time | Last time on the last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_time=17:00:00`). REQUIRED if `prior_notice_last_day` is defined. FORBIDDEN otherwise. |
-| \-&nbsp; `prior_notice_start_day` | OPTIONAL | Integer | Earliest day before travel to make the booking request (e.g.: “Ride can be booked at the earliest one week in advance at midnight” will be encoded as `prior_notice_start_day=7`). FORBIDDEN for `booking_type=0` if `prior_notice_duration_max` is defined. OPTIONAL otherwise. |
-| \-&nbsp; `prior_notice_start_time` | Conditionally REQUIRED | Time | Earliest time on the earliest day before travel to make the booking request (e.g. : “Ride can be booked at the earliest one week in advance at midnight” will be encoded as `prior_notice_start_time=00:00:00`). REQUIRED if `prior_notice_start_day` is defined. FORBIDDEN otherwise. |
-| \-&nbsp; `prior_notice_service_id` | OPTIONAL | ID referencing `calendar.service_id` | Indicates the service days on which `prior_notice_last_day` or `prior_notice_start_day` are counted (e.g. : If empty, `prior_notice_start_day=2` will be two calendar days in advance. If defined as a `service_id` containing only business days (weekdays without holidays), `prior_notice_start_day=2` will be two business days in advance). OPTIONAL if `booking_type=1`. FORBIDDEN otherwise. |
-| \-&nbsp; `message` | OPTIONAL | String | Message to riders utilizing service at a `stop_time` when booking on-demand pickup and drop off. Meant to provide minimal information to be transmitted within a user interface about the action a rider must take in order to utilize the service. |
-| \-&nbsp; `pickup_message` | OPTIONAL| String  | Functions in the same way as `message` but used when riders have on-demand pickup only. |
-| \-&nbsp; `drop_off_message` | OPTIONAL| String | Functions in the same way as `message` but used when riders have on-demand drop off only. |
-| \-&nbsp; `phone_number` | OPTIONAL| Phone number | Phone number to call to make the booking request. |
-| \-&nbsp; `info_url` | OPTIONAL| URL | URL providing information about the booking rule. |
-| \-&nbsp; `booking_url` | OPTIONAL| URL  | URL to an online interface or app where the booking request can be made. |
+ \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Up to same-day booking with advance notice.<br>`1` - Up to prior day(s) booking. |
+ \-&nbsp; `prior_notice_duration_min` | Conditionally REQUIRED | Integer | Minimum number of minutes before travel to make the request. REQUIRED for `booking_type=0`. Forbidden otherwise. |
+ \-&nbsp; `prior_notice_duration_max` | OPTIONAL | Integer | Maximum number of minutes before travel to make the booking request.  OPTIONAL for `booking_type=0`. FORBIDDEN otherwise.|
+ \-&nbsp; `prior_notice_last_day` | Conditionally REQUIRED | Integer | Last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_day=1`). REQUIRED for `booking_type=1`. FORBIDDEN otherwise.|
+ \-&nbsp; `prior_notice_last_time` | Conditionally REQUIRED | Time | Last time on the last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_time=17:00:00`). REQUIRED if `prior_notice_last_day` is defined. FORBIDDEN otherwise. |
+ \-&nbsp; `prior_notice_start_day` | OPTIONAL | Integer | Earliest day before travel to make the booking request (e.g.: “Ride can be booked at the earliest one week in advance at midnight” will be encoded as `prior_notice_start_day=7`). FORBIDDEN for `booking_type=0` if `prior_notice_duration_max` is defined. OPTIONAL otherwise. |
+ \-&nbsp; `prior_notice_start_time` | Conditionally REQUIRED | Time | Earliest time on the earliest day before travel to make the booking request (e.g. : “Ride can be booked at the earliest one week in advance at midnight” will be encoded as `prior_notice_start_time=00:00:00`). REQUIRED if `prior_notice_start_day` is defined. FORBIDDEN otherwise. |
+ \-&nbsp; `prior_notice_service_id` | OPTIONAL | ID referencing `calendar.service_id` | Indicates the service days on which `prior_notice_last_day` or `prior_notice_start_day` are counted (e.g. : If empty, `prior_notice_start_day=2` will be two calendar days in advance. If defined as a `service_id` containing only business days (weekdays without holidays), `prior_notice_start_day=2` will be two business days in advance). OPTIONAL if `booking_type=1`. FORBIDDEN otherwise. |
+ \-&nbsp; `message` | OPTIONAL | String | Message to riders utilizing service at a `stop_time` when booking on-demand pickup and drop off. Meant to provide minimal information to be transmitted within a user interface about the action a rider must take in order to utilize the service. |
+ \-&nbsp; `pickup_message` | OPTIONAL| String  | Functions in the same way as `message` but used when riders have on-demand pickup only. |
+ \-&nbsp; `drop_off_message` | OPTIONAL| String | Functions in the same way as `message` but used when riders have on-demand drop off only. |
+ \-&nbsp; `phone_number` | OPTIONAL| Phone number | Phone number to call to make the booking request. |
+ \-&nbsp; `info_url` | OPTIONAL| URL | URL providing information about the booking rule. |
+ \-&nbsp; `booking_url` | OPTIONAL| URL  | URL to an online interface or app where the booking request can be made. |
 
 ##### Example:
 
