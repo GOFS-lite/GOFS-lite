@@ -26,6 +26,8 @@ This document defines the format and structure of the files that comprise a GOFS
    - [fares.json](#faresjson)
    - [wait_times.json](#wait_timejson)
    - [wait_time](#wait_time)
+   - [booking_rules.json](#booking_rulesjson)
+
 
 
 ## Document Conventions
@@ -87,8 +89,9 @@ File Name | Presence | Description
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
-`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided.
-`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided.
+`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` or `booking_rules.json` MUST be provided.
+`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` or `booking_rules.json` MUST be provided.
+`booking_rules.json` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` or `booking_rules.json` MUST be provided.
 
 ## File Requirements
 
