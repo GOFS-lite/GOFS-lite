@@ -744,7 +744,7 @@ The following fields are all attributes within the main "data" object for this f
   "ttl": 86400,
   "version": "1.0",
   "data": {
-    "wait_times": [
+    "booking_rules": [
         {
           "from_s2_cells": ["89c25998b" , "89c25998d"],
           "to_s2_cells": null,
