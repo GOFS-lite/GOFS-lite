@@ -24,7 +24,7 @@ This document defines the format and structure of the files that comprise a GOFS
    - [operating_rules.json](#operating_rulesjson)
    - [calendars.json](#calendarsjson)
    - [fares.json](#faresjson)
-   - [wait_times.json](#wait_timejson)
+   - [wait_times.json](#wait_timesjson)
    - [wait_time](#wait_time)
    - [booking_rules.json](#booking_rulesjson)
 
