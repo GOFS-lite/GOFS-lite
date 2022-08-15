@@ -91,7 +91,7 @@ File Name | Presence | Description
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
 `wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` or `booking_rules.json` MUST be provided.
 `wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` or `booking_rules.json` MUST be provided.
-`booking_rules.json` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` or `booking_rules.json` MUST be provided.
+`booking_rules.json` | Optionally REQUIRED | Returns rules for booking in queried areas when live ETA or real time booking is not available. Either `wait_times.json` or `wait_time` or `booking_rules.json` MUST be provided.
 
 ## File Requirements
 
@@ -615,10 +615,10 @@ The following fields are all attributes within the main "data" object for this f
 Field Name | Presence | Type | Description
 ---|---|---|---
 `wait_times` | REQUIRED | Array | Array that contains one object per wait time as defined below.
-\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. Forbidden otherwise.
-\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. Forbidden otherwise.
-\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. Forbidden otherwise.
-\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. Forbidden otherwise.
+\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. FORBIDDEN otherwise.
+\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. FORBIDDEN otherwise.
+\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
+\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
 \-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
 \-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
 
@@ -668,8 +668,8 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
 `pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
-`drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. Forbidden otherwise.
-`drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. Forbidden otherwise.
+`drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. FORBIDDEN otherwise.
+`drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. FORBIDDEN otherwise.
 `brand_id` | Conditionally REQUIRED | ID | Brand ID from `service_brands.json` to define the wait time is requested for which brand. REQUIRED if more than one service brand is available.  
 
 The following fields are all attributes within the main "data" object for this query response.
@@ -718,12 +718,12 @@ The following fields are all attributes within the main "data" object for this f
 | Field Name | Presence | Type |Description |
  ---------- | ---- | -------- | ----------- |
  `booking_rules` |  REQUIRED  | Array | Array that contains one object per booking rules as defined below. |
-\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. Forbidden otherwise.
-\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. Forbidden otherwise.
-\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. Forbidden otherwise.
-\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. Forbidden otherwise.
- \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Up to same-day booking with advance notice.<br>`1` - Up to prior day(s) booking. |
- \-&nbsp; `prior_notice_duration_min` | Conditionally REQUIRED | Integer | Minimum number of minutes before travel to make the request. REQUIRED for `booking_type=0`. Forbidden otherwise. |
+\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. FORBIDDEN otherwise.
+\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. FORBIDDEN otherwise.
+\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
+\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
+ \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Up to same-day booking with advance notice.<br>`1` - Up to prior day(s) booking.<br><br>If real time booking is available, please use either `wait_times.json` or `wait_time` instead. ||
+ \-&nbsp; `prior_notice_duration_min` | Conditionally REQUIRED | Integer | Minimum number of minutes before travel to make the request. REQUIRED for `booking_type=0`. FORBIDDEN otherwise. |
  \-&nbsp; `prior_notice_duration_max` | OPTIONAL | Integer | Maximum number of minutes before travel to make the booking request.  OPTIONAL for `booking_type=0`. FORBIDDEN otherwise.|
  \-&nbsp; `prior_notice_last_day` | Conditionally REQUIRED | Integer | Last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_day=1`). REQUIRED for `booking_type=1`. FORBIDDEN otherwise.|
  \-&nbsp; `prior_notice_last_time` | Conditionally REQUIRED | Time | Last time on the last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_time=17:00:00`). REQUIRED if `prior_notice_last_day` is defined. FORBIDDEN otherwise. |
