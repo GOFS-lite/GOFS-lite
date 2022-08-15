@@ -483,7 +483,6 @@ Field Name | Presence | Type | Description
         "calendars": ["weekend", "labor_day"],
         "brand_id": "large_ride",
         "vehicle_type_id": "large_van"
-        "booking_rule_id": "booking_rule_1"
       }
    ]
   }
