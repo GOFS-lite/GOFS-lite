@@ -463,7 +463,6 @@ Field Name | Presence | Type | Description
 \-&nbsp; `calendars` | REQUIRED | Array | Array of calendar IDs from `calendars.json` defining the dates and days when the pickup and drop off occur.
 \-&nbsp; `brand_id` | OPTIONAL | ID | ID from a service brand defined in `service_brands.json`. If this field is not provided, the operating rule applies to every service brand defined in `service_brands.json`.
 \-&nbsp; `vehicle_type_id` | REQUIRED | Array | Array of vehicle types used for delivering the on-demand service.
-\-&nbsp; `booking_rule_id` | OPTIONAL | ID | ID referencing a booking rule.
 
 
 ##### Example:
