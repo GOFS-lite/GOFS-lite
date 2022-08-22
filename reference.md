@@ -710,7 +710,7 @@ Field Name | Presence | Type | Description
 
 ### booking_rules.json
 
-This file defines rules about how to book a ride. If available, users can either book a ride in real-time, for the same day with an advance notice or for a futur day. 
+This file defines rules about how to book a ride. If available, users can either book a ride in real-time, for the same day with an advance notice or for a future day. 
 
 The following fields are all attributes within the main "data" object for this feed.
 
