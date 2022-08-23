@@ -24,8 +24,10 @@ This document defines the format and structure of the files that comprise a GOFS
    - [operating_rules.json](#operating_rulesjson)
    - [calendars.json](#calendarsjson)
    - [fares.json](#faresjson)
-   - [wait_times.json](#wait_timejson)
+   - [wait_times.json](#wait_timesjson)
    - [wait_time](#wait_time)
+   - [booking_rules.json](#booking_rulesjson)
+
 
 
 ## Document Conventions
@@ -87,8 +89,9 @@ File Name | Presence | Description
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
-`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided.
-`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided.
+`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas. 
 
 ## File Requirements
 
@@ -272,7 +275,7 @@ Field Name | Presence | Type | Description
 
 ### service_brands.json
 
-This files defines the on-demand service brands available to the riders. One feed MAY contain multiple service brands with different features and amenities (e.g. A ridehail service system MAY offer the 'Regular Ride', 'Large Ride' and 'Shared Ride' services).
+This file defines the on-demand service brands available to the riders. One feed MAY contain multiple service brands with different features and amenities (e.g. A ridehail service system MAY offer the 'Regular Ride', 'Large Ride' and 'Shared Ride' services).
 
 The following fields are all attributes within the main "data" object for this feed.
 
@@ -360,14 +363,14 @@ The following fields are all attributes within the main "data" object for this f
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-| `zones` | REQUIRED | GeoJSON FeatureCollection | Object as per [RFC 7946](https://tools.ietf.org/html/rfc7946).|
-| -&nbsp;`type` | REQUIRED | String | `FeatureCollection` as per [RFC 7946](https://tools.ietf.org/html/rfc7946). |
-| -&nbsp;`features` | REQUIRED | Array | Array of objects where each object represent a zone, as defined below. |
-| -&nbsp;\-&nbsp;`type` | REQUIRED | String | `Feature` as per [RFC 7946](https://tools.ietf.org/html/rfc7946). |
-| -&nbsp;\-&nbsp;`zone_id` | REQUIRED | ID | Unique identifier of the zone. |
-| -&nbsp;\-&nbsp;`geometry` | REQUIRED | GeoJSON MultiPolygon | A polygon that describes where riders can be picked up or dropped off. <p> Following the [right-hand rule](https://tools.ietf.org/html/rfc7946#section-3.1.6), a clockwise arrangement of points defines the area enclosed by the multipolygon, where pickup and drop off MAY occur; while a counterclockwise order defines the area outside the multipolygon, where pickup and drop off MAY NOT occur. |
-| -&nbsp;\-&nbsp;`properties` | REQUIRED | Object | Location property keys. |
-| -&nbsp;\-&nbsp;\-&nbsp;`name` | OPTIONAL | String | Indicates the name of the zone as displayed to the riders. |
+ `zones` | REQUIRED | GeoJSON FeatureCollection | Object as per [RFC 7946](https://tools.ietf.org/html/rfc7946).|
+ -&nbsp;`type` | REQUIRED | String | `FeatureCollection` as per [RFC 7946](https://tools.ietf.org/html/rfc7946). |
+ -&nbsp;`features` | REQUIRED | Array | Array of objects where each object represent a zone, as defined below. |
+ -&nbsp;\-&nbsp;`type` | REQUIRED | String | `Feature` as per [RFC 7946](https://tools.ietf.org/html/rfc7946). |
+ -&nbsp;\-&nbsp;`zone_id` | REQUIRED | ID | Unique identifier of the zone. |
+ -&nbsp;\-&nbsp;`geometry` | REQUIRED | GeoJSON MultiPolygon | A polygon that describes where riders can be picked up or dropped off. <p> Following the [right-hand rule](https://tools.ietf.org/html/rfc7946#section-3.1.6), a clockwise arrangement of points defines the area enclosed by the multipolygon, where pickup and drop off MAY occur; while a counterclockwise order defines the area outside the multipolygon, where pickup and drop off MAY NOT occur. |
+ -&nbsp;\-&nbsp;`properties` | REQUIRED | Object | Location property keys. |
+ -&nbsp;\-&nbsp;\-&nbsp;`name` | OPTIONAL | String | Indicates the name of the zone as displayed to the riders. |
 
 
 ##### Example:
@@ -612,10 +615,10 @@ The following fields are all attributes within the main "data" object for this f
 Field Name | Presence | Type | Description
 ---|---|---|---
 `wait_times` | REQUIRED | Array | Array that contains one object per wait time as defined below.
-\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. Forbidden otherwise.
-\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. Forbidden otherwise.
-\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. Forbidden otherwise.
-\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. Forbidden otherwise.
+\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. FORBIDDEN otherwise.
+\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. FORBIDDEN otherwise.
+\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
+\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
 \-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
 \-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
 
@@ -665,8 +668,8 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
 `pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
-`drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. Forbidden otherwise.
-`drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. Forbidden otherwise.
+`drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. FORBIDDEN otherwise.
+`drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. FORBIDDEN otherwise.
 `brand_id` | Conditionally REQUIRED | ID | Brand ID from `service_brands.json` to define the wait time is requested for which brand. REQUIRED if more than one service brand is available.  
 
 The following fields are all attributes within the main "data" object for this query response.
@@ -674,8 +677,8 @@ The following fields are all attributes within the main "data" object for this q
 Field Name | Presence | Type | Description
 ---|---|---|---
 `wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`
-- `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
-- `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
+\-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
+\-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
 
 ##### Examples:
 
@@ -701,6 +704,76 @@ Field Name | Presence | Type | Description
         "wait_time": 600
       }
     ]
+  }
+}
+```
+
+### booking_rules.json
+
+This file defines rules about how to book a ride. If available, users can either book a ride in real-time, for the same day with an advance notice or for a future day. 
+
+The following fields are all attributes within the main "data" object for this feed.
+
+
+| Field Name | Presence | Type |Description |
+ ---------- | ---- | -------- | ----------- |
+ `booking_rules` |  REQUIRED  | Array | Array that contains one object per booking rules as defined below. |
+\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. FORBIDDEN otherwise.
+\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. FORBIDDEN otherwise.
+\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
+\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
+ \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Real-time booking. To be use with `wait_times.json` or `wait_time`. <br>`1` - Up to same-day booking with advance notice.<br>`2` - Up to prior day(s) booking. ||
+ \-&nbsp; `prior_notice_duration_min` | Conditionally REQUIRED | Integer | Minimum number of minutes before travel to make the request. REQUIRED for `booking_type=1`. FORBIDDEN otherwise. |
+ \-&nbsp; `prior_notice_duration_max` | OPTIONAL | Integer | Maximum number of minutes before travel to make the booking request.  OPTIONAL for `booking_type=1`. FORBIDDEN otherwise.|
+ \-&nbsp; `prior_notice_last_day` | Conditionally REQUIRED | Integer | Last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_day=1`). REQUIRED for `booking_type=2`. FORBIDDEN otherwise.|
+ \-&nbsp; `prior_notice_last_time` | Conditionally REQUIRED | Time | Last time on the last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_time=17:00:00`). REQUIRED if `prior_notice_last_day` is defined. FORBIDDEN otherwise. |
+ \-&nbsp; `prior_notice_start_day` | OPTIONAL | Integer | Earliest day before travel to make the booking request (e.g.: “Ride can be booked at the earliest one week in advance at midnight” will be encoded as `prior_notice_start_day=7`). FORBIDDEN for `booking_type=0`. FORBIDDEN for `booking_type=1` if `prior_notice_duration_max` is defined. OPTIONAL otherwise. |
+ \-&nbsp; `prior_notice_start_time` | Conditionally REQUIRED | Time | Earliest time on the earliest day before travel to make the booking request (e.g. : “Ride can be booked at the earliest one week in advance at midnight” will be encoded as `prior_notice_start_time=00:00:00`). FORBIDDEN for `booking_type=0`. REQUIRED if `prior_notice_start_day` is defined. FORBIDDEN otherwise. |
+ \-&nbsp; `prior_notice_calendar_id` | OPTIONAL | ID referencing a `calendar_id` from `calendars.json` | Indicates the service days on which `prior_notice_last_day` or `prior_notice_start_day` are counted (e.g. : If empty, `prior_notice_start_day=2` will be two calendar days in advance. If defined as a `calendar_id` containing only business days (weekdays without holidays), `prior_notice_start_day=2` will be two business days in advance). OPTIONAL if `booking_type=2`. FORBIDDEN otherwise. |
+ \-&nbsp; `message` | OPTIONAL | String | Message to riders utilizing service inside a zone when booking on-demand pickup and drop off. Meant to provide minimal information to be transmitted within a user interface about the action a rider must take in order to utilize the service. |
+ \-&nbsp; `pickup_message` | OPTIONAL| String  | Functions in the same way as `message` but used when riders have on-demand pickup only. |
+ \-&nbsp; `drop_off_message` | OPTIONAL| String | Functions in the same way as `message` but used when riders have on-demand drop off only. |
+ \-&nbsp; `phone_number` | OPTIONAL| Phone number | Phone number to call to make the booking request. |
+ \-&nbsp; `info_url` | OPTIONAL| URL | URL providing information about the booking rule. |
+ \-&nbsp; `booking_url` | OPTIONAL| URL  | URL to an online interface or app where the booking request can be made. |
+
+##### Example:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "booking_rules": [
+        {
+          "from_s2_cells": ["89c25998b" , "89c25998d"],
+          "to_s2_cells": null,
+          "from_zone_ids": null,
+          "to_zone_ids": null,
+          "booking_type": 1,
+          "prior_notice_duration_min": 120
+        },
+        {
+          "from_s2_cells": null,
+          "to_s2_cells": null,
+          "from_zone_ids": ["zoneA"],
+          "to_zone_ids": null,
+          "booking_type": 1,
+          "prior_notice_duration_min": 30,
+          "prior_notice_duration_max": 180,
+        },
+        {
+          "from_s2_cells": null,
+          "to_s2_cells": null,
+          "from_zone_ids": ["zoneA"],
+          "to_zone_ids": ["zoneB"],
+          "booking_type": 2,
+          "prior_notice_start_day": 2,
+          "prior_notice_last_time": "17:00:00",  
+          }
+      ]
+    }
   }
 }
 ```
