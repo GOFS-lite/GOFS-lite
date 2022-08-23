@@ -89,7 +89,7 @@ File Name | Presence | Description
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
-`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided if there is no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas. 
 
