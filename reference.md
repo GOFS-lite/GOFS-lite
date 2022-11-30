@@ -801,11 +801,11 @@ Field Name | Presence | Type | Description
 `realtime_booking` | REQUIRED | Object | An array that contains one object per `brand_id`
 \-&nbsp; `error` | Conditionally REQUIRED | String | If booking is impossible, human readable string explaning why booking is not possible. REQUIRED if `booking_detail` is not provided. 
 \-&nbsp; `booking_detail` | Conditionally REQUIRED | Object | Object with detail on how booking is possible. REQUIRED if `error` is not provided. 
--&nbsp;\-&nbsp; `service_name` | OPTIONAL | String | If the service name needs to change due to real time booking changest, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
+-&nbsp;\-&nbsp; `service_name` | OPTIONAL | String | If the service name needs to change due to real time booking changes, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
 -&nbsp;\-&nbsp; `android_url` | Conditionally REQUIRED | URL | Android App Links that can open the booking app on Android. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.  
 -&nbsp;\-&nbsp; `ios_url` | Conditionally REQUIRED | URL | iOS Universal Links that can open the booking app on iOS. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.  
 -&nbsp;\-&nbsp; `web_url` | Conditionally REQUIRED | URL | Phone number to call to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.  
--&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone | If the service name needs to change due to real time booking changest, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
+-&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone | If the service name needs to change due to real time booking changes, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
 
 ##### Examples:
 
