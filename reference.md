@@ -672,7 +672,6 @@ Field Name | Presence | Type | Description
 `pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
 `drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. FORBIDDEN otherwise.
 `drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. FORBIDDEN otherwise.
-`brand_id` | Conditionally REQUIRED | ID | Brand ID from `service_brands.json` to define the wait time is requested for which brand. REQUIRED if more than one service brand is available.  
 
 The following fields are all attributes within the main "data" object for this query response.
 
@@ -686,7 +685,7 @@ Field Name | Presence | Type | Description
 
 ###### Query: 
 
-`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular`
+`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30`
 
 ###### Response: 
 
