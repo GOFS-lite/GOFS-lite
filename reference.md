@@ -670,8 +670,8 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
 `pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
-`drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. FORBIDDEN otherwise.
-`drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. FORBIDDEN otherwise.
+`drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. FORBIDDEN otherwise. Providing a dropoff location allow for better result and additional fields. 
+`drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. FORBIDDEN otherwise. Providing a dropoff location allow for better result and additional fields. 
 
 The following fields are all attributes within the main "data" object for this query response.
 
@@ -680,6 +680,10 @@ Field Name | Presence | Type | Description
 `wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`
 \-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
 \-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
+\-&nbsp; `realtime_booking` | OPTIONAL | Object | Optionally, a object with the same values returned in the `realtime_booking` call can be provided. 
+\-&nbsp; `estimated_travel_time` | Non-negative Integer | Object | The estimated time in seconds the travel from the pickup to dropoff location. Cannot be provided if a drop off location is not provided. 
+\-&nbsp; `estimated_travel_cost` | OPTIONAL | Non-negative currency amount | The estimated fare cost of the travel from the pickup to dropoff location. Cannot be provided if a drop off location is not provided. 
+\-&nbsp; `estimated_travel_cost_currency` | Conditionally REQUIRED | Currency code | Currency of the `estimated_travel_cost`. REQUIRED if `estimated_travel_cost` is provided. 
 
 ##### Examples:
 
@@ -703,6 +707,35 @@ Field Name | Presence | Type | Description
       {
         "brand_id": "large_ride",
         "wait_time": 600
+      }
+    ]
+  }
+}
+```
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "wait_times": [
+      {
+        "brand_id": "regular_ride",
+        "wait_time": 300,
+        "realtime_booking": {
+          "error": null,
+          "booking_detail": {
+            "service_name": "Taxi",
+            "android_uri": "https://www.example.com/app?service_type=XL&platform=android",
+            "ios_uri": "https://www.example.com/app?service_type=XL&platform=ios",
+            "web_uri": "https://www.example.com/app?service_type=XL",
+            "phone_number": "+18005551234",
+          }
+        }, 
+        "estimated_travel_time": 900,
+        "estimated_travel_cost": 15.00,
+        "estimated_travel_cost_currency": "CAD"
       }
     ]
   }
@@ -823,10 +856,10 @@ Field Name | Presence | Type | Description
     "realtime_booking": {
       "error": null,
       "booking_detail" {
-        "service_name" : "Taxi",
-        "android_uri" : "https://www.example.com/app?service_type=XL&platform=android",
-        "ios_uri" : "https://www.example.com/app?service_type=XL&platform=ios",
-        "web_uri" : "https://www.example.com/app?service_type=XL",
+        "service_name": "Taxi",
+        "android_uri": "https://www.example.com/app?service_type=XL&platform=android",
+        "ios_uri": "https://www.example.com/app?service_type=XL&platform=ios",
+        "web_uri": "https://www.example.com/app?service_type=XL",
         "phone_number": "+18005551234",
       }
     }
