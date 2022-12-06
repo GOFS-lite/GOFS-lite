@@ -27,6 +27,7 @@ This document defines the format and structure of the files that comprise a GOFS
    - [wait_times.json](#wait_timesjson)
    - [wait_time](#wait_time)
    - [booking_rules.json](#booking_rulesjson)
+   - [realtime_booking](#realtime_booking)
 
 
 
@@ -92,6 +93,7 @@ File Name | Presence | Description
 `wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas. 
+`realtime_booking.json` | OPTIONAL | Returns details for available booking when static booking details can't be provided
 
 ## File Requirements
 
@@ -773,6 +775,61 @@ The following fields are all attributes within the main "data" object for this f
           "prior_notice_last_time": "17:00:00",  
           }
       ]
+    }
+  }
+}
+```
+
+### realtime_booking
+
+This dynamic query provides real time booking details, when static booking details can't be provided or are missing detail. 
+
+The request must have the following query parameters. 
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up. 
+`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up. 
+`drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. FORBIDDEN otherwise.
+`drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. FORBIDDEN otherwise.
+`brand_id` | Conditionally REQUIRED | ID | Brand ID from `service_brands.json` to define the wait time is requested for which brand. REQUIRED if more than one service brand is available.  
+
+The following fields are all attributes within the main "data" object for this query response.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`realtime_booking` | REQUIRED | Object | An array that contains one object per `brand_id`
+\-&nbsp; `error` | Conditionally REQUIRED | String | If booking is impossible, human readable string explaning why booking is not possible. REQUIRED if `booking_detail` is not provided. 
+\-&nbsp; `booking_detail` | Conditionally REQUIRED | Object | Object with detail on how booking is possible. REQUIRED if `error` is not provided. 
+-&nbsp;\-&nbsp; `service_name` | OPTIONAL | String | If the service name needs to change due to real time booking changes, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
+-&nbsp;\-&nbsp; `android_url` | Conditionally REQUIRED | URL | Android App Links that can open the booking app on Android. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.  
+-&nbsp;\-&nbsp; `ios_url` | Conditionally REQUIRED | URL | iOS Universal Links that can open the booking app on iOS. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.  
+-&nbsp;\-&nbsp; `web_url` | Conditionally REQUIRED | URL | Phone number to call to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.  
+-&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone | If the service name needs to change due to real time booking changes, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
+
+##### Examples:
+
+###### Query: 
+
+`https://www.example.com/gofs/1/en/realtime_booking?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular`
+
+###### Response: 
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 0,
+  "version": "1.0",
+  "data": {
+    "realtime_booking": {
+      "error": null,
+      "booking_detail" {
+        "service_name" : "Taxi",
+        "android_uri" : "https://www.example.com/app?service_type=XL&platform=android",
+        "ios_uri" : "https://www.example.com/app?service_type=XL&platform=ios",
+        "web_uri" : "https://www.example.com/app?service_type=XL",
+        "phone_number": "+18005551234",
+      }
     }
   }
 }
