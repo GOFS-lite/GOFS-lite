@@ -554,14 +554,7 @@ Field Name | Presence | Type | Description
 
 ### fares.json
 
-This file defines the base fare for a system. Each possible value that are contains an array of Fare objects as defined below. 
-
-Field Name | Presence | Type | Description
----|---|---|---
-`interval` | OPTIONAL | Float | Interval in unit of the parent key at which the amount of the row is applied, from start to end.
-`start` | OPTIONAL | Non-negative Integer | The value in unit of the parent key at which the amount defined in the object starts being charged.
-`end` | OPTIONAL | Non-negative Integer | The value in unit of the parent key at which the amount defined in the object stops being charged. 
-`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of the parent key.
+This file defines fare calculations for a system.
 
 The following fields are all attributes within the main "data" object for this feed.
 
@@ -570,16 +563,25 @@ Field Name | Presence | Type | Description
 `fares` | REQUIRED | Array | Array that contains one object per fare defintion as defined below.
 \-&nbsp;`fare_id` | REQUIRED | ID | Unique identifier of the fare.
 \-&nbsp;`currency` | REQUIRED | Currency code | The currency of the fare.
-\-&nbsp;`kilometer` | OPTIONAL | Array | Array of Fare objects defining how much cost a kilometer of travel between two interval. 
-\-&nbsp;`minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service in the vehicle regardless if the vehicle is moving or not between two interval. 
-\-&nbsp;`active_minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service while the vehicle is actively moving between two interval. 
-\-&nbsp;`idle_minute` | OPTIONAL | Array | Array of Fare objects defining how much cost a minute of service while the vehicle is not moving or stopped between two interval. 
-\-&nbsp;`rider` | OPTIONAL | Array | Array of Fare objects defining how much a rider traveling in the on-demand service between two interval. 
-\-&nbsp;`luggage` | OPTIONAL | Array | Array of Fare objects defining how much a luggage traveling in the on-demand service between two interval. 
+\-&nbsp;`kilometer` | OPTIONAL | Array | Array of Fare objects defining the price of the service per kilometer. Total cost per rider is the base cost defined in `rider`, plus the addition of all segments in `kilometer`, `minute`, `active_minute`, and `idle_minute`.
+\-&nbsp;`minute` | OPTIONAL | Array | Array of Fare objects defining the price of the service per minute, regardless of whether the vehicle is moving or not. Total cost per rider is the base cost defined in `rider`, plus the addition of all relevant segments in `kilometer`, `minute`, `active_minute`, and `idle_minute`.
+\-&nbsp;`active_minute` | OPTIONAL | Array | Array of Fare objects defining the price of the service per minute, while the vehicle is actively moving. Total cost per rider is the base cost defined in `rider`, plus the addition of all relevant segments in `kilometer`, `minute`, `active_minute`, and `idle_minute`.
+\-&nbsp;`idle_minute` | OPTIONAL | Array | Array of Fare objects defining the price of the service per minute, while the vehicle is stopped or not moving. Total cost per rider is the base cost defined in `rider`, plus the addition of all relevant segments in `kilometer`, `minute`, `active_minute`, and `idle_minute`.
+\-&nbsp;`rider` | OPTIONAL | Array | Array of Fare objects defining the base cost per rider.
+\-&nbsp;`luggage` | OPTIONAL | Array | Array of Fare objects defining the cost of luggage as a surcharge per piece of luggage.
 
-##### Example:
+The following is the structure of the "Fares" object. 
 
-Imagine a distance-based fare. The first 10 kilometers cost 3.30 CAD per kilometer, and are charged every 250 meters. All other kilometers cost 4.30 CAD, and are charged every 500 meters. This situation would be represented by:
+Field Name | Presence | Type | Description
+---|---|---|---
+`interval` | OPTIONAL | Float | Interval, in units of the parent key, at which the `amount` of the row is applied, from start to end.
+`start` | OPTIONAL | Non-negative Integer | The value, in units of the parent key, at which the `amount` defined in the object starts being charged.
+`end` | OPTIONAL | Non-negative Integer | The value, in units of the parent key, at which the `amount` defined in the object stops being charged. 
+`amount` | OPTIONAL | Non-negative currency amount | The fare cost per each unit of the parent key.
+
+##### Example 1: Distance-based fare
+
+The first 10 kilometers cost 3.30 CAD per kilometer, and are charged every 250 meters. All other kilometers cost 4.30 CAD, and are charged every 500 meters.
 
 ```jsonc
 {
@@ -588,24 +590,98 @@ Imagine a distance-based fare. The first 10 kilometers cost 3.30 CAD per kilomet
   "version": "1.0",
   "data": {
     "fares": [
-        {
-          "fare_id": "RegularPrice",
-          "currency": "CAD",
-          "kilometer": [
-            {
-              "interval": 0.25,
-              "end": 10,
-              "amount": 3.30,
-            },
-            {
-              "interval": 0.5,
-              "start": 10,
-              "amount": 4.30,
-            }
-          ]
-        }
-      ]
-    }
+      {
+        "fare_id": "RegularPrice",
+        "currency": "CAD",
+        "kilometer": [
+          {
+            "interval": 0.25,
+            "end": 10,
+            "amount": 3.30,
+          },
+          {
+            "interval": 0.5,
+            "start": 10,
+            "amount": 4.30,
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+##### Example 2: Time-based fare
+
+The first 20 minutes cost $1.00 CAD per minute, and are charged every minute. After 20 minutes, the user pays $1.50 per minute, charged every 30 seconds.
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "fares": [
+      {
+        "fare_id": "RegularPrice",
+        "currency": "CAD",
+        "minute": [
+          {
+            "interval": 1,
+            "end": 20,
+            "amount": 1.0,
+          },
+          {
+            "interval": 0.5,
+            "start": 20,
+            "amount": 1.5,
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+##### Example 3: Mixed pricing
+
+The user does not pay more than the base price of $2.50 CAD for the first 10km. After 10km, the user pays $1.00 CAD per km. After 25km, the user pays an additional extension price of $3.00 CAD per 5km on top of the $1.00/km. Users are allowed 2 pieces of free luggage, and are charged $5 per additional piece of luggage.
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "fares": [
+      {
+        "fare_id": "RegularPrice",
+        "currency": "CAD",
+        "kilometer": [
+          {
+            "interval": 1.0,
+            "start": 10,
+            "amount": 1.0
+          },
+          {
+            "interval": 5,
+            "start": 25,
+            "amount": 3.0,
+          }
+        ],
+        "rider": [
+          {
+            "amount": 2.5
+          }
+        ],
+        "luggage": [
+          {
+            "start": 3,
+            "amount": 5
+          }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -635,29 +711,28 @@ Field Name | Presence | Type | Description
   "version": "1.0",
   "data": {
     "wait_times": [
-        {
-          "from_s2_cells": ["89c25998b" , "89c25998d"],
-          "to_s2_cells": null,
-          "from_zone_ids": null,
-          "to_zone_ids": null,
-          "wait_time": 300,
-        },
-        {
-          "from_s2_cells": null,
-          "to_s2_cells": null,
-          "from_zone_ids": ["zoneA"],
-          "to_zone_ids": null,
-          "wait_time": 300,
-        },
-        {
-          "from_s2_cells": null,
-          "to_s2_cells": null,
-          "from_zone_ids": ["zoneA"],
-          "to_zone_ids": ["zoneB"],
-          "wait_time": 200,
-        }
-      ]
-    }
+      {
+        "from_s2_cells": ["89c25998b" , "89c25998d"],
+        "to_s2_cells": null,
+        "from_zone_ids": null,
+        "to_zone_ids": null,
+        "wait_time": 300,
+      },
+      {
+        "from_s2_cells": null,
+        "to_s2_cells": null,
+        "from_zone_ids": ["zoneA"],
+        "to_zone_ids": null,
+        "wait_time": 300,
+      },
+      {
+        "from_s2_cells": null,
+        "to_s2_cells": null,
+        "from_zone_ids": ["zoneA"],
+        "to_zone_ids": ["zoneB"],
+        "wait_time": 200,
+      }
+    ]
   }
 }
 ```
