@@ -56,7 +56,7 @@ Presence conditions applicable to fields and files:
 - **Email** - An email address. <br> *Example: `example@example.com`*
 - **Enum** - An option from a set of predefined constants listed in the "Description" column. <br> *Example: If provided, the `wheelchair_boarding` field MUST indicate either `boarding_accessible`, `boarding_inacessible`, or any other options available in the list.*
 - **GeoJSON FeatureCollection** - A FeatureCollection as described by the [IETF RFC 7946-3.3](https://tools.ietf.org/html/rfc7946#section-3.3).
-- **GeoJSON MultiPolygon** - A Geometry Object as described by the [IETF RFC 7946-3.1.7](https://tools.ietf.org/html/rfc7946#section-3.1.7).
+- **GeoJSON Polygon** - A Geometry Object as described by the [IETF RFC 7946-3.1.6](https://tools.ietf.org/html/rfc7946#section-3.1.6).
 - **ID** - Should be represented as a string that identifies that particular entity. An ID:
     * MUST be unique within like fields (e.g. `id` MUST be unique among zones)
     * does not have to be globally unique, unless otherwise specified
@@ -370,7 +370,7 @@ Field Name | Presence | Type | Description
  -&nbsp;`features` | REQUIRED | Array | Array of objects where each object represent a zone, as defined below. |
  -&nbsp;\-&nbsp;`type` | REQUIRED | String | `Feature` as per [RFC 7946](https://tools.ietf.org/html/rfc7946). |
  -&nbsp;\-&nbsp;`zone_id` | REQUIRED | ID | Unique identifier of the zone. |
- -&nbsp;\-&nbsp;`geometry` | REQUIRED | GeoJSON MultiPolygon | A polygon that describes where riders can be picked up or dropped off. <p> Following the [right-hand rule](https://tools.ietf.org/html/rfc7946#section-3.1.6), a clockwise arrangement of points defines the area enclosed by the multipolygon, where pickup and drop off MAY occur; while a counterclockwise order defines the area outside the multipolygon, where pickup and drop off MAY NOT occur. |
+ -&nbsp;\-&nbsp;`geometry` | REQUIRED | GeoJSON Polygon | A polygon that describes where riders can be picked up or dropped off. <p> Following the [right-hand rule](https://tools.ietf.org/html/rfc7946#section-3.1.6), a clockwise arrangement of points defines the area enclosed by the polygon, where pickup and drop off MAY occur; while a counterclockwise order defines the area outside the polygon, where pickup and drop off MAY NOT occur. |
  -&nbsp;\-&nbsp;`properties` | REQUIRED | Object | Location property keys. |
  -&nbsp;\-&nbsp;\-&nbsp;`name` | OPTIONAL | String | Indicates the name of the zone as displayed to the riders. |
 
@@ -390,7 +390,7 @@ Field Name | Presence | Type | Description
           "type": "Feature",
           "zone_id": "zoneA",
           "geometry": {
-            "type": "MultiPolygon",
+            "type": "Polygon",
             "coordinates": [
               [
                 [
