@@ -88,7 +88,7 @@ File Name | Presence | Description
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
-`fares.json` | OPTIONAL | Defines static fare rules for a system. 
+`fares.json` | OPTIONAL | Defines static fare rules for a system.
 `wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas.
@@ -610,7 +610,7 @@ Imagine a distance-based fare. The first 10 kilometers cost 3.30 CAD per kilomet
 
 ### wait_times.json
 
-This dynamic query provides wait time for specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users.
+This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision.
 
 The following fields are all attributes within the main "data" object for this feed.
 
@@ -662,7 +662,7 @@ Field Name | Presence | Type | Description
 
 ### wait_time
 
-This dynamic query provides real time wait times for a specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users.
+This dynamic query provides real-time wait times for a specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users.
 
 The request must be a POST request (for security reasons) and the body use a JSON format. Here are the following attributes.
 
@@ -701,6 +701,7 @@ POST `https://www.example.com/gofs/1/en/wait_time`
 {
   "pickup_lat": 45.60,
   "pickup_lon": -73.30,
+  "brand_id": ["regular_ride", "large_ride", "shared_ride"],
 }
 ```
 
@@ -715,15 +716,15 @@ POST `https://www.example.com/gofs/1/en/wait_time`
     "wait_times": [
       {
         "brand_id": "regular_ride",
-        "wait_time": 300
+        "estimated_wait_time": 300
       },
       {
         "brand_id": "large_ride",
-        "wait_time": 600
+        "estimated_wait_time": 600
       },
       {
         "brand_id": "shared_ride",
-        "wait_time": 450
+        "estimated_wait_time": 450
       }
     ]
   }
