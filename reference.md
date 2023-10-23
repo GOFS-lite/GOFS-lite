@@ -27,6 +27,7 @@ This document defines the format and structure of the files that comprise a GOFS
    - [wait_times.json](#wait_timesjson)
    - [wait_time](#wait_time)
    - [booking_rules.json](#booking_rulesjson)
+   - [realtime_booking](#realtime_booking)
 
 
 
@@ -88,10 +89,11 @@ File Name | Presence | Description
 `zones.json` | REQUIRED | Geographically defines zones where on-demand services are available to the riders.
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
-`fares.json` | OPTIONAL | Defines static fare rules for a system.
-`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
-`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
-`booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas.
+`fares.json` | OPTIONAL | Defines static fare rules for a system. 
+`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas. 
+`realtime_booking` | OPTIONAL | Returns details for available booking when static booking details can't be provided. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 
 ## File Requirements
 
@@ -686,7 +688,7 @@ The user does not pay more than the base price of $2.50 CAD for the first 10km. 
 
 ### wait_times.json
 
-This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision.
+This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
 
 The following fields are all attributes within the main "data" object for this feed.
 
@@ -698,7 +700,7 @@ Field Name | Presence | Type | Description
 \-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
 \-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
 \-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
-\-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand.
+\-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
 
 ##### Example:
 
@@ -737,9 +739,9 @@ Field Name | Presence | Type | Description
 
 ### wait_time
 
-This dynamic query provides real-time wait times for a specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users.
+This dynamic query provides wait time for specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users. 
 
-The request must be a POST request (for security reasons) and the body use a JSON format. Here are the following attributes.
+The request must have the following query parameters. 
 
 Field Name | Presence | Type | Description
 ---|---|---|---
@@ -747,7 +749,7 @@ Field Name | Presence | Type | Description
 `pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up.
 `drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. FORBIDDEN otherwise.
 `drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. FORBIDDEN otherwise.
-`brand_id` | REQUIRED | Array | Array of service brand Ids defined in `service_brands.json`. Used to filter out the results the wait time is requested for. At least one service brand Id must be provided.
+`brand_id` | Conditionally REQUIRED | ID |  Array | Array of service brand Ids defined in `service_brands.json`. REQUIRED if more than one service brand is available.  
 
 The following fields are all attributes within the main "data" object for this query response.
 
@@ -755,32 +757,15 @@ Field Name | Presence | Type | Description
 ---|---|---|---
 `wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`
 \-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
-\-&nbsp; `estimated_wait_time` | REQUIRED | Non-negative Integer | The estimated wait time in seconds the rider will need to wait in the location before pickup.
-\-&nbsp; `estimated_travel_time` | OPTIONAL | Non-negative Integer | The estimated travel time in seconds from the pickup to dropoff location. Cannot be provided if a drop off location is not provided.
-\-&nbsp; `estimated_travel_cost` | OPTIONAL | Non-negative currency amount | The estimated fare cost of the trip from the pickup to dropoff location. Cannot be provided if a drop off location is not provided.
-\-&nbsp; `estimated_travel_cost_currency` | Conditionally REQUIRED | Currency code | Currency of the `estimated_travel_cost`. REQUIRED if `estimated_travel_cost` is provided.
-\-&nbsp; `booking_details` | OPTIONAL | Object | Optionally, an object with real time booking details can be provided.
--&nbsp;\-&nbsp; `service_name` | OPTIONAL | String | If the service name needs to change due to real time booking changes, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
--&nbsp;\-&nbsp; `android_url` | Conditionally REQUIRED | URL | Android App Links that can open the booking app on Android. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
--&nbsp;\-&nbsp; `ios_url` | Conditionally REQUIRED | URL | iOS Universal Links that can open the booking app on iOS. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
--&nbsp;\-&nbsp; `web_url` | Conditionally REQUIRED | URL | Web url to browse to in order to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
--&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone Number | Phone number to call to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
+\-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
 
 ##### Examples:
 
-###### Query:
+###### Query: 
 
-POST `https://www.example.com/gofs/1/en/wait_time`
+`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride&brand_id=large_ride`
 
-```jsonc
-{
-  "pickup_lat": 45.60,
-  "pickup_lon": -73.30,
-  "brand_id": ["regular_ride", "large_ride", "shared_ride"],
-}
-```
-
-###### Response:
+###### Response: 
 
 ```jsonc
 {
@@ -791,71 +776,11 @@ POST `https://www.example.com/gofs/1/en/wait_time`
     "wait_times": [
       {
         "brand_id": "regular_ride",
-        "estimated_wait_time": 300
+        "wait_time": 300
       },
       {
         "brand_id": "large_ride",
-        "estimated_wait_time": 600
-      },
-      {
-        "brand_id": "shared_ride",
-        "estimated_wait_time": 450
-      }
-    ]
-  }
-}
-```
-
-###### Query:
-
-POST `https://www.example.com/gofs/1/en/wait_time`
-
-```jsonc
-{
-  "pickup_lat": 45.60,
-  "pickup_lon": -73.30,
-  "drop_off_lat": 45.70,
-  "drop_off_lon": -73.40,
-  "brand_id": ["regular_ride", "large_ride"]
-}
-```
-
-###### Response:
-
-```jsonc
-{
-  "last_updated": 1609866247,
-  "ttl": 300,
-  "version": "1.0",
-  "data": {
-    "wait_times": [
-      {
-        "brand_id": "regular_ride",
-        "estimated_wait_time": 300,
-        "estimated_travel_time": 300,
-        "estimated_travel_cost": 30,
-        "estimated_travel_cost_currency": "CAD",
-        "booking_detail": {
-            "service_name": "Taxi",
-            "android_uri": "https://www.example.com/app?service_type=REG&platform=android",
-            "ios_uri": "https://www.example.com/app?service_type=REG&platform=ios",
-            "web_uri": "https://www.example.com/app?service_type=REG",
-            "phone_number": "+18005551234",
-        }
-      },
-      {
-        "brand_id": "large_ride",
-        "estimated_wait_time": 450,
-        "estimated_travel_time": 300,
-        "estimated_travel_cost": 45,
-        "estimated_travel_cost_currency": "CAD",
-        "booking_detail": {
-            "service_name": "Taxi Van",
-            "android_uri": "https://www.example.com/app?service_type=XL&platform=android",
-            "ios_uri": "https://www.example.com/app?service_type=XL&platform=ios",
-            "web_uri": "https://www.example.com/app?service_type=XL",
-            "phone_number": "+18005551234",
-        }
+        "wait_time": 600
       }
     ]
   }
@@ -928,6 +853,75 @@ The following fields are all attributes within the main "data" object for this f
           }
       ]
     }
+  }
+}
+```
+
+### realtime_booking
+This dynamic query provides time/cost estimates and realtime_booking information for specific location. 
+
+The request must have the the same query parameters as `wait_time`.
+The following fields are all attributes within the main "data" object for this query response.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`realtime_booking` | REQUIRED | Array | An array that contains one object per `brand_id`
+\-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
+\-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup.
+\-&nbsp; `travel_time` | OPTIONAL | Non-negative Integer | The estimated travel time in seconds from the pickup to dropoff location. Cannot be provided if a drop off location is not provided.
+\-&nbsp; `travel_cost` | OPTIONAL | Non-negative currency amount | The estimated fare cost of the trip from the pickup to dropoff location. Cannot be provided if a drop off location is not provided.
+\-&nbsp; `travel_cost_currency` | Conditionally REQUIRED | Currency code | Currency of the `estimated_travel_cost`. REQUIRED if `estimated_travel_cost` is provided.
+\-&nbsp; `booking_detail` | OPTIONAL | Object | Optionally, an object with real time booking details can be provided.
+-&nbsp;\-&nbsp; `service_name` | OPTIONAL | String | If the service name needs to change due to real time booking changes, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
+-&nbsp;\-&nbsp; `android_uri` | Conditionally REQUIRED | URL | Android App Links that can open the booking app on Android. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
+-&nbsp;\-&nbsp; `ios_uri` | Conditionally REQUIRED | URL | iOS Universal Links that can open the booking app on iOS. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
+-&nbsp;\-&nbsp; `web_uri` | Conditionally REQUIRED | URL | Web url to browse to in order to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
+-&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone Number | Phone number to call to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
+
+##### Examples:
+
+###### Query: 
+
+`https://www.example.com/gofs/1/en/realtime_booking?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride&brand_id=large_ride`
+
+###### Response:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 300,
+  "version": "1.0",
+  "data": {
+    "realtime_booking": [
+      {
+        "brand_id": "regular_ride",
+        "wait_time": 300,
+        "travel_time": 300,
+        "travel_cost": 30,
+        "travel_cost_currency": "CAD",
+        "booking_detail": {
+            "service_name": "Taxi",
+            "android_uri": "https://www.example.com/app?service_type=REG&platform=android",
+            "ios_uri": "https://www.example.com/app?service_type=REG&platform=ios",
+            "web_uri": "https://www.example.com/app?service_type=REG",
+            "phone_number": "+18005551234",
+        }
+      },
+      {
+        "brand_id": "large_ride",
+        "wait_time": 450,
+        "travel_time": 300,
+        "travel_cost": 45,
+        "travel_cost_currency": "CAD",
+        "booking_detail": {
+            "service_name": "Taxi Van",
+            "android_uri": "https://www.example.com/app?service_type=XL&platform=android",
+            "ios_uri": "https://www.example.com/app?service_type=XL&platform=ios",
+            "web_uri": "https://www.example.com/app?service_type=XL",
+            "phone_number": "+18005551234",
+        }
+      }
+    ]
   }
 }
 ```
