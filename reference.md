@@ -763,7 +763,7 @@ Field Name | Presence | Type | Description
 
 ###### Query: 
 
-`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride&brand_id=large_ride`
+`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride,large_ride`
 
 ###### Response: 
 
@@ -884,7 +884,7 @@ Field Name | Presence | Type | Description
 
 ###### Query: 
 
-`https://www.example.com/gofs/1/en/realtime_booking?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride&brand_id=large_ride`
+`https://www.example.com/gofs/1/en/realtime_booking?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride,large_ride`
 
 ###### Response:
 
