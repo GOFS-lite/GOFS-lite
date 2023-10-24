@@ -858,7 +858,9 @@ The following fields are all attributes within the main "data" object for this f
 ```
 
 ### realtime_booking
-This dynamic query provides time/cost estimates and realtime_booking information for specific location. 
+This dynamic query provides time/cost estimates and realtime_booking information for specific location. It can be used in situations where a provider expects to have more fine-grained or accurate booking information for a given trip, compared to what is available via other endpoints.
+
+For example, a provider may be able to give more accurate pricing information for a specific trip, compared to the broader rules-based pricing information available from `fares.json`.
 
 The request must have the the same query parameters as `wait_time`.
 The following fields are all attributes within the main "data" object for this query response.
