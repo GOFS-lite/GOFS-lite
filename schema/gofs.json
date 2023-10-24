@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/GOFS-lite/GOFS-lite/blob/main/reference.md#gofsjson",
+  "description": "Auto-discovery file that links to all of the other files published by the system.",
+  "type": "object",
+  "properties": {
+    "last_updated": {
+      "description": "Last time the data in the feed was updated in POSIX time.",
+      "type": "integer",
+      "minimum": 1450155600
+    },
+    "ttl": {
+      "description": "Number of seconds before the data in the feed will be updated again (0 if the data should always be refreshed).",
+      "type": "integer",
+      "minimum": 0
+    },
+    "version": {
+      "description": "GOFS-lite version number to which the feed conforms, according to the versioning framework (added in v1.1).",
+      "type": "string",
+      "enum": [
+        "1.0"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z]{2,3}(-[A-Z]{2})?$": {
+          "description": "IETF BCP 47 language code.",
+          "type": "object",
+          "properties": {
+            "feeds": {
+              "description": "An array of all of the feeds that are published by the auto-discovery file. Each element in the array is an object with the keys below.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Key identifying the type of feed this is. The key must be the base file name defined in the spec for the corresponding feed type.",
+                    "type": "string",
+                    "enum": [
+                      "gofs_versions",
+                      "system_information",
+                      "service_brands",
+                      "vehicle_types",
+                      "zones",
+                      "operating_rules",
+                      "calendars",
+                      "fares",
+                      "wait_time",
+                      "booking_rules",
+                      "realtime_booking"
+                    ]
+                  },
+                  "url": {
+                    "description": "URL for the feed.",
+                    "type": "string",
+                    "format": "uri"
+                  }
+                },
+                "required": [
+                  "name",
+                  "url"
+                ]
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "feeds"
+          ]
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "last_updated",
+    "ttl",
+    "version",
+    "data"
+  ]
+}
