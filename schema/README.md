@@ -11,4 +11,4 @@ These definitions are a work-in-progress and as such:
 
 ## Usage
 
-At present it is possible to validate a GOFS-lite feed by pasting each file of the feed (as Input JSON) and its corresponding schema definition (as Schema) into a tool such as [jsonschemavalidator.net](https://www.jsonschemavalidator.net/).
+At present it is possible to validate a GOFS-lite feed by pasting each file of the feed (as Document or Input JSON) and its corresponding schema definition (as Schema) into a tool such as [jsonschemalint.com](https://jsonschemalint.com/) or [jsonschemavalidator.net](https://www.jsonschemavalidator.net/).
