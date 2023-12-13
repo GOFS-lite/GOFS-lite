@@ -64,15 +64,18 @@
                   "calendar_id",
                   "start_date",
                   "end_date"
-                ]
+                ],
+                "additionalProperties": false
               }
             }
           },
           "required": [
             "calendars"
-          ]
+          ],
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,

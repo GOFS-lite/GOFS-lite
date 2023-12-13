@@ -62,7 +62,8 @@
         "language",
         "timezone",
         "name"
-      ]
+      ],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,

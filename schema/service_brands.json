@@ -44,7 +44,8 @@
               "brand_name",
               "brand_color",
               "brand_text_color"
-            ]
+            ],
+            "additionalProperties": false
           }
         }
       },
@@ -90,5 +91,6 @@
     "ttl",
     "version",
     "data"
-  ]
+  ],
+  "additionalProperties": false
 }

@@ -60,14 +60,16 @@
                 "required": [
                   "name",
                   "url"
-                ]
+                ],
+                "additionalProperties": false
               },
               "minItems": 1
             }
           },
           "required": [
             "feeds"
-          ]
+          ],
+          "additionalProperties": false
         }
       }
     }

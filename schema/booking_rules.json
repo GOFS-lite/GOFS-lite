@@ -68,13 +68,15 @@
             },
             "required": [
               "booking_type"
-            ]
+            ],
+            "additionalProperties": false
           }
         }
       },
       "required": [
         "booking_rules"
-      ]
+      ],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,

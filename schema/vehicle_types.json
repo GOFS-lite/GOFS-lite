@@ -43,13 +43,15 @@
               "vehicle_type_id",
               "max_capacity",
               "wheelchair_boarding"
-            ]
+            ],
+            "additionalProperties": false
           }
         }
       },
       "required": [
         "vehicle_types"
-      ]
+      ],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
