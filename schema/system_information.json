@@ -42,6 +42,9 @@
         "url": {
           "type": "string"
         },
+        "subscribe_url": {
+          "type": "string"
+        },
         "purchase_url": {
           "type": "string"
         },

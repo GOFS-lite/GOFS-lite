@@ -46,6 +46,7 @@
                       "operating_rules",
                       "calendars",
                       "fares",
+                      "wait_times",
                       "wait_time",
                       "booking_rules",
                       "realtime_booking"

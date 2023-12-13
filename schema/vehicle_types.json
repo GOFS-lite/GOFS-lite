@@ -40,9 +40,7 @@
               }
             },
             "required": [
-              "vehicle_type_id",
-              "max_capacity",
-              "wheelchair_boarding"
+              "vehicle_type_id"
             ],
             "additionalProperties": false
           }

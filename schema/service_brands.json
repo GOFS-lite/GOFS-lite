@@ -36,8 +36,12 @@
               "brand_name": {
                 "type": "string"
               },
-              "brand_color": {},
-              "brand_text_color": {}
+              "brand_color": {
+                "type": "string"
+              },
+              "brand_text_color": {
+                "type": "string"
+              }
             },
             "required": [
               "brand_id",
