@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://github.com/GOFS-lite/GOFS-lite/blob/main/reference.md#",
+  "$id": "https://github.com/GOFS-lite/GOFS-lite/blob/main/reference.md#operating_rulesjson",
   "description": "This file contains operating rules enabling on-demand services between zones or within the same zone, according to time windows and calendars. At least one operating rule MUST be defined. If start_pickup_window, end_pickup_window, and end_dropoff_window are not provided, it is assumed that the on-demand service is available at any hours of the day.",
   "type": "object",
   "properties": {
