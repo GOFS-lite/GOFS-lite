@@ -485,7 +485,7 @@ Field Name | Presence | Type | Description
         "end_dropoff_window": "09:30:00",
         "calendars": ["weekend", "labor_day"],
         "brand_id": "large_ride",
-        "vehicle_type_id": "large_van",
+        "vehicle_type_id": ["large_van"],
         "fare_id": "RegularPrice"
       }
    ]
