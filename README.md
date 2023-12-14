@@ -20,3 +20,6 @@ Future GOFS-lite extensions may support on-demand services:
 - that can be booked in advance.
 
 GOFS-lite is a work in progress, there are currently important missing functionalities like accurate pricing, travel time estimations, etc. Questions or comments can be sent to gofs-lite@transitapp.com
+
+## GOFS-lite JSON schema
+A JSON schema which can be used to validate GOFS-lite feeds can be found [here](schema/).

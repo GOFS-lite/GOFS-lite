@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/GOFS-lite/GOFS-lite/blob/main/reference.md#vehicle_typesjson",
+  "description": "This file contains operating rules enabling on-demand services between zones or within the same zone, according to time windows and calendars. At least one operating rule MUST be defined. If start_pickup_window, end_pickup_window, and end_dropoff_window are not provided, it is assumed that the on-demand service is available at any hours of the day.",
+  "type": "object",
+  "properties": {
+    "last_updated": {
+      "description": "Last time the data in the feed was updated in POSIX time.",
+      "type": "integer",
+      "minimum": 1450155600
+    },
+    "ttl": {
+      "description": "Number of seconds before the data in the feed will be updated again (0 if the data should always be refreshed).",
+      "type": "integer",
+      "minimum": 0
+    },
+    "version": {
+      "description": "GOFS-lite version number to which the feed conforms, according to the versioning framework (added in v1.1).",
+      "type": "string",
+      "enum": [
+        "1.0"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "vehicle_types": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "vehicle_type_id": {
+                "type": "string"
+              },
+              "max_capacity": {
+                "type": "string"
+              },
+              "wheelchair_boarding": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "vehicle_type_id"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "vehicle_types"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "last_updated",
+    "ttl",
+    "version",
+    "data"
+  ]
+}
