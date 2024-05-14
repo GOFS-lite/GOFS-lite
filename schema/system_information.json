@@ -45,9 +45,6 @@
         "subscribe_url": {
           "type": "string"
         },
-        "purchase_url": {
-          "type": "string"
-        },
         "start_date": {
           "type": "string"
         },
