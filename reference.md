@@ -266,7 +266,7 @@ Field Name | Presence | Type | Description
     "short_name": "Micro",
     "operator": "MicroTransit, Inc",
     "url": "https://www.example.com",
-    "purchase_url": "https://www.example.com",
+    "subscribe_url": "https://www.example.com",
     "start_date": "20100610",
     "phone_number": "+18005551234",
     "email": "customerservice@example.com",
