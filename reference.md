@@ -759,7 +759,7 @@ Field Name | Presence | Type | Description
 \-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
 \-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
 
-##### Examples:
+##### Example 1: Wait times
 
 ###### Query: 
 
@@ -783,6 +783,25 @@ Field Name | Presence | Type | Description
         "wait_time": 600
       }
     ]
+  }
+}
+```
+
+##### Example 2: No results available for the specific location at the time of the query
+
+###### Query: 
+
+`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride,large_ride`
+
+###### Response: 
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 86400,
+  "version": "1.0",
+  "data": {
+    "wait_times": []
   }
 }
 ```
@@ -880,7 +899,7 @@ Field Name | Presence | Type | Description
 -&nbsp;\-&nbsp; `web_uri` | Conditionally REQUIRED | URL | Web url to browse to in order to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
 -&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone Number | Phone number to call to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
 
-##### Examples:
+##### Example 1: Real time booking information
 
 ###### Query: 
 
@@ -924,6 +943,25 @@ Field Name | Presence | Type | Description
         }
       }
     ]
+  }
+}
+```
+
+##### Example 2: No results available for the specific location at the time of the query
+
+###### Query: 
+
+`https://www.example.com/gofs/1/en/realtime_booking?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride,large_ride`
+
+###### Response:
+
+```jsonc
+{
+  "last_updated": 1609866247,
+  "ttl": 300,
+  "version": "1.0",
+  "data": {
+    "realtime_booking": []
   }
 }
 ```
