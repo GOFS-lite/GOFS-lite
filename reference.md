@@ -875,10 +875,10 @@ Field Name | Presence | Type | Description
 \-&nbsp; `travel_cost_currency` | Conditionally REQUIRED | Currency code | Currency of the `estimated_travel_cost`. REQUIRED if `estimated_travel_cost` is provided.
 \-&nbsp; `booking_detail` | OPTIONAL | Object | Optionally, an object with real time booking details can be provided.
 -&nbsp;\-&nbsp; `service_name` | OPTIONAL | String | If the service name needs to change due to real time booking changes, `service_name` can be provided to update the name of the on-demand service system to be displayed to the riders.
--&nbsp;\-&nbsp; `android_uri` | Conditionally REQUIRED | URL | Android App Links that can open the booking app on Android. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
--&nbsp;\-&nbsp; `ios_uri` | Conditionally REQUIRED | URL | iOS Universal Links that can open the booking app on iOS. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
--&nbsp;\-&nbsp; `web_uri` | Conditionally REQUIRED | URL | Web url to browse to in order to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
--&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone Number | Phone number to call to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
+-&nbsp;\-&nbsp; `android_uri` | Conditionally REQUIRED | URL | Android App Links that can open the booking app on Android. At least of one `android_uri`, `ios_uri`, `web_uri`, or `phone_number` needs to be provided.
+-&nbsp;\-&nbsp; `ios_uri` | Conditionally REQUIRED | URL | iOS Universal Links that can open the booking app on iOS. At least of one `android_uri`, `ios_uri`, `web_uri`, or `phone_number` needs to be provided.
+-&nbsp;\-&nbsp; `web_uri` | Conditionally REQUIRED | URL | Web url to browse to in order to make the booking request. At least of one `android_uri`, `ios_uri`, `web_uri`, or `phone_number` needs to be provided.
+-&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone Number | Phone number to call to make the booking request. At least of one `android_uri`, `ios_uri`, `web_uri`, or `phone_number` needs to be provided.
 
 ##### Examples:
 
