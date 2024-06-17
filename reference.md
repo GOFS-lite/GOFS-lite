@@ -755,11 +755,11 @@ The following fields are all attributes within the main "data" object for this q
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`
+`wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`. Should be empty if no wait time is available for the requested location.
 \-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
 \-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
 
-##### Example 1: Wait times
+##### Examples:
 
 ###### Query: 
 
@@ -783,25 +783,6 @@ Field Name | Presence | Type | Description
         "wait_time": 600
       }
     ]
-  }
-}
-```
-
-##### Example 2: No results available for the specific location at the time of the query
-
-###### Query: 
-
-`https://www.example.com/gofs/1/en/wait_time?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride,large_ride`
-
-###### Response: 
-
-```jsonc
-{
-  "last_updated": 1609866247,
-  "ttl": 86400,
-  "version": "1.0",
-  "data": {
-    "wait_times": []
   }
 }
 ```
@@ -886,7 +867,7 @@ The following fields are all attributes within the main "data" object for this q
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`realtime_booking` | REQUIRED | Array | An array that contains one object per `brand_id`
+`realtime_booking` | REQUIRED | Array | An array that contains one object per `brand_id`. Should be empty if no realtime booking is available for the requested location.
 \-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
 \-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup.
 \-&nbsp; `travel_time` | OPTIONAL | Non-negative Integer | The estimated travel time in seconds from the pickup to dropoff location. Cannot be provided if a drop off location is not provided.
@@ -899,7 +880,7 @@ Field Name | Presence | Type | Description
 -&nbsp;\-&nbsp; `web_uri` | Conditionally REQUIRED | URL | Web url to browse to in order to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
 -&nbsp;\-&nbsp; `phone_number` | Conditionally REQUIRED | Phone Number | Phone number to call to make the booking request. At least of one `android_url`, `ios_url`, `web_url`, or `phone_number` needs to be provided.
 
-##### Example 1: Real time booking information
+##### Examples:
 
 ###### Query: 
 
@@ -943,25 +924,6 @@ Field Name | Presence | Type | Description
         }
       }
     ]
-  }
-}
-```
-
-##### Example 2: No results available for the specific location at the time of the query
-
-###### Query: 
-
-`https://www.example.com/gofs/1/en/realtime_booking?pickup_lat=45.60&pickup_lon=-73.30&brand_id=regular_ride,large_ride`
-
-###### Response:
-
-```jsonc
-{
-  "last_updated": 1609866247,
-  "ttl": 300,
-  "version": "1.0",
-  "data": {
-    "realtime_booking": []
   }
 }
 ```
