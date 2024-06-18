@@ -755,7 +755,7 @@ The following fields are all attributes within the main "data" object for this q
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`
+`wait_times` | REQUIRED | Array | An array that contains one object per `brand_id`. Should be empty if no wait time is available for the requested location.
 \-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
 \-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup. 
 
@@ -867,7 +867,7 @@ The following fields are all attributes within the main "data" object for this q
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`realtime_booking` | REQUIRED | Array | An array that contains one object per `brand_id`
+`realtime_booking` | REQUIRED | Array | An array that contains one object per `brand_id`. Should be empty if no realtime booking is available for the requested location.
 \-&nbsp; `brand_id` | REQUIRED | ID | ID from a service brand defined in `service_brands.json`
 \-&nbsp; `wait_time` | REQUIRED | Non-negative Integer | Wait time in seconds the rider will need to wait in the location before pickup.
 \-&nbsp; `travel_time` | OPTIONAL | Non-negative Integer | The estimated travel time in seconds from the pickup to dropoff location. Cannot be provided if a drop off location is not provided.
