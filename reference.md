@@ -927,3 +927,23 @@ Field Name | Presence | Type | Description
   }
 }
 ```
+
+
+### deeplink with query params
+
+The uris provided in `realtime_booking` (`android_uri`, `ios_uri`, `web_uri`) and `booking_rules` (`booking_url`) should support a specific set of query params:
+
+Param | Presence | Type | Description
+---|---|---|---
+`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up.
+`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up.
+`drop_off_lat` | REQUIRED | Latitude | Latitude of the location where the user will be dropped off.
+`drop_off_lon` | REQUIRED | Longitude | Longitude of the location where the user will be dropped off.
+`pickup_time` | OPTIONAL | Timestamp | Timestamp, in milliseconds, of the moment the user will be picked-up.
+`drop_off_time` | OPTIONAL | Timestamp | Timestamp, in milliseconds, of the moment the user will be dropped-off.
+
+#### Example
+
+```
+https://www.examples.com?pickup_lat=45.52585187926036&pickup_lon=-73.59502716927499&drop_off_lat=45.53614412053443&drop_off_lon=-73.5130921428607&pick_up_time=1726173300000&drop_off_time=1726173600000
+```
