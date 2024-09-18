@@ -74,6 +74,7 @@ Presence conditions applicable to fields and files:
 - **Currency code** - String containing 3 letters currency code as defined by ISO 4217. Ex: "CAD", "USD". 
 * **Latitude** - WGS84 latitude in decimal degrees. The value MUST be greater than or equal to -90.0 and less than or equal to 90.0. Example: `41.890169` for the Colosseum in Rome.
 * **Longitude** - WGS84 longitude in decimal degrees. The value MUST be greater than or equal to -180.0 and less than or equal to 180.0. Example: `12.492269` for the Colosseum in Rome.
+- **Timestamp** - An integer representing the number of seconds that have elapsed since 00:00:00 UTC on 1 January 1970 (Unix epoch).
 
 ## Dataset Files
 
@@ -926,4 +927,24 @@ Field Name | Presence | Type | Description
     ]
   }
 }
+```
+
+
+### deeplink with query params
+
+The uris provided in `realtime_booking` (`android_uri`, `ios_uri`, `web_uri`) and `booking_rules` (`booking_url`) should support a specific set of query params:
+
+Param | Presence | Type | Description
+---|---|---|---
+`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up.
+`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up.
+`drop_off_lat` | REQUIRED | Latitude | Latitude of the location where the user will be dropped off.
+`drop_off_lon` | REQUIRED | Longitude | Longitude of the location where the user will be dropped off.
+`pickup_time` | OPTIONAL | Timestamp | Indicates, in seconds since the Unix epoch, when the user will be picked-up.
+`drop_off_time` | OPTIONAL | Timestamp | Indicates, in seconds since the Unix epoch, when the user will be dropped-off.
+
+#### Example
+
+```
+https://www.example.com?pickup_lat=45.52585187926036&pickup_lon=-73.59502716927499&drop_off_lat=45.53614412053443&drop_off_lon=-73.5130921428607&pick_up_time=1726173300000&drop_off_time=1726173600000
 ```
