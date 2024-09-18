@@ -74,6 +74,7 @@ Presence conditions applicable to fields and files:
 - **Currency code** - String containing 3 letters currency code as defined by ISO 4217. Ex: "CAD", "USD". 
 * **Latitude** - WGS84 latitude in decimal degrees. The value MUST be greater than or equal to -90.0 and less than or equal to 90.0. Example: `41.890169` for the Colosseum in Rome.
 * **Longitude** - WGS84 longitude in decimal degrees. The value MUST be greater than or equal to -180.0 and less than or equal to 180.0. Example: `12.492269` for the Colosseum in Rome.
+- **Timestamp** - An integer representing the number of seconds that have elapsed since 00:00:00 UTC on 1 January 1970 (Unix epoch).
 
 ## Dataset Files
 
@@ -127,7 +128,7 @@ Every JSON file presented in this specification contains the same common header 
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`last_updated` | REQUIRED | Timestamp | Indicates, in seconds since the Unix epoch, the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
+`last_updated` | REQUIRED | Timestamp | Indicates the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
 `ttl` | REQUIRED | Non-negative integer | Number of seconds before the data in the feed will be updated again. If the data should always be refreshed, the value SHOULD be `0`.
 `version`  | REQUIRED | String | GOFS-lite version number to which the feed confirms, according to the versioning framework.
 `data` | REQUIRED | Object | Response data in the form of name:value pairs.
