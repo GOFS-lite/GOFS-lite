@@ -127,7 +127,7 @@ Every JSON file presented in this specification contains the same common header 
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`last_updated` | REQUIRED | Timestamp | Indicates the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
+`last_updated` | REQUIRED | Timestamp | Indicates, in seconds since the Unix epoch, the last time data in the feed was updated. This timestamp represents the publisher's knowledge of the current state of the system at this point in time.
 `ttl` | REQUIRED | Non-negative integer | Number of seconds before the data in the feed will be updated again. If the data should always be refreshed, the value SHOULD be `0`.
 `version`  | REQUIRED | String | GOFS-lite version number to which the feed confirms, according to the versioning framework.
 `data` | REQUIRED | Object | Response data in the form of name:value pairs.
@@ -939,8 +939,8 @@ Param | Presence | Type | Description
 `pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up.
 `drop_off_lat` | REQUIRED | Latitude | Latitude of the location where the user will be dropped off.
 `drop_off_lon` | REQUIRED | Longitude | Longitude of the location where the user will be dropped off.
-`pickup_time` | OPTIONAL | Timestamp | Timestamp, in milliseconds, of the moment the user will be picked-up.
-`drop_off_time` | OPTIONAL | Timestamp | Timestamp, in milliseconds, of the moment the user will be dropped-off.
+`pickup_time` | OPTIONAL | Timestamp | Indicates, in seconds since the Unix epoch, when the user will be picked-up.
+`drop_off_time` | OPTIONAL | Timestamp | Indicates, in seconds since the Unix epoch, when the user will be dropped-off.
 
 #### Example
 
