@@ -313,7 +313,7 @@ Field Name | Presence | Type | Description
       },
       {
         "brand_id": "shared_ride",
-        "brand_name": "Large Ride",
+        "brand_name": "Shared Ride",
         "brand_color": "1C7F49",
         "brand_text_color": "FFFFFF",
       }
