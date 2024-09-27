@@ -25,8 +25,7 @@
       "type": "object",
       "properties": {
         "zones": {
-          "$id": "https://geojson.org/schema/FeatureCollection.json",
-          "title": "GeoJSON FeatureCollection",
+          "title": "GeoJSON FeatureCollection with extra fields required by GOFS-lite",
           "type": "object",
           "required": [
             "type",
@@ -45,11 +44,15 @@
                 "title": "GeoJSON Feature",
                 "type": "object",
                 "required": [
+                  "zone_id",
                   "type",
                   "properties",
                   "geometry"
                 ],
                 "properties": {
+                  "zone_id": {
+                    "type": "string"
+                  },
                   "type": {
                     "type": "string",
                     "enum": [
