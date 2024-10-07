@@ -390,6 +390,7 @@ Field Name | Presence | Type | Description
         {
           "type": "Feature",
           "zone_id": "zoneA",
+          "properties": {},
           "geometry": {
             "type": "Polygon",
             "coordinates": [
