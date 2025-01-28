@@ -346,7 +346,7 @@ Field Name | Presence | Type | Description
     "vehicle_types": [
       {
         "vehicle_type_id": "large_van",
-        "max_capacity": "7",
+        "max_capacity": 7,
         "wheelchair_boarding": "boarding_accessible",
       }
     ]
