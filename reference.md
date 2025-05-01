@@ -747,8 +747,8 @@ The request must have the following query parameters.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
-`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up.
-`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up.
+`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked up.
+`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked up.
 `drop_off_lat` | Conditionally REQUIRED | Latitude | Latitude of the location where the user will be dropped off. Required if `drop_off_lon` is provided. FORBIDDEN otherwise.
 `drop_off_lon` | Conditionally REQUIRED | Longitude | Longitude of the location where the user will be dropped off. Required if `drop_off_lat` is provided. FORBIDDEN otherwise.
 `brand_id` | Conditionally REQUIRED | ID |  Array | Array of service brand Ids defined in `service_brands.json`. REQUIRED if more than one service brand is available.  
@@ -864,7 +864,13 @@ This dynamic query provides time/cost estimates and realtime_booking information
 
 For example, a provider may be able to give more accurate pricing information for a specific trip, compared to the broader rules-based pricing information available from `fares.json`.
 
-The request must have the the same query parameters as `wait_time`.
+The request must have the the same query parameters as `wait_time`. Additionally, these two optional parameters can be provided to make sure the pick up and drop off adresses do not get lost during reverse geocoding.
+
+Field Name | Presence | Type | Description
+---|---|---|---
+`pickup_address` | OPTIONAL | String | Full address of the location where the user will be picked up.
+`drop_off_address` | OPTIONAL | String | Full address of the location where the user will be dropped off.
+
 The following fields are all attributes within the main "data" object for this query response.
 
 Field Name | Presence | Type | Description
@@ -937,12 +943,14 @@ The uris provided in `realtime_booking` (`android_uri`, `ios_uri`, `web_uri`) an
 
 Param | Presence | Type | Description
 ---|---|---|---
-`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked-up.
-`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked-up.
+`pickup_lat` | REQUIRED | Latitude | Latitude of the location where the user will be picked up.
+`pickup_lon` | REQUIRED | Longitude | Longitude of the location where the user will be picked up.
+`pickup_address` | OPTIONAL | String | Full address of the location where the user will be picked up.
 `drop_off_lat` | REQUIRED | Latitude | Latitude of the location where the user will be dropped off.
 `drop_off_lon` | REQUIRED | Longitude | Longitude of the location where the user will be dropped off.
-`pickup_time` | OPTIONAL | Timestamp | Indicates, in seconds since the Unix epoch, when the user will be picked-up.
-`drop_off_time` | OPTIONAL | Timestamp | Indicates, in seconds since the Unix epoch, when the user will be dropped-off.
+`drop_off_address` | OPTIONAL | String | Full address of the location where the user will be dropped off.
+`pickup_time` | OPTIONAL | Timestamp | Indicates, in seconds since the Unix epoch, when the user will be picked up.
+`drop_off_time` | OPTIONAL | Timestamp | Indicates, in seconds since the Unix epoch, when the user will be dropped off.
 
 #### Example
 
