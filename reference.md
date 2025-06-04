@@ -690,17 +690,15 @@ The user does not pay more than the base price of $2.50 CAD for the first 10km. 
 
 ### wait_times.json
 
-This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
+This file defines wait times for the entire system via zones in `zones.json`. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
 
 The following fields are all attributes within the main "data" object for this feed.
 
 Field Name | Presence | Type | Description
 ---|---|---|---
 `wait_times` | REQUIRED | Array | Array that contains one object per wait time as defined below.
-\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. FORBIDDEN otherwise.
-\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. FORBIDDEN otherwise.
-\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
-\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
+\-&nbsp;`from_zone_ids` | REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update.
+\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination.
 \-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
 \-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
 
@@ -714,22 +712,11 @@ Field Name | Presence | Type | Description
   "data": {
     "wait_times": [
       {
-        "from_s2_cells": ["89c25998b" , "89c25998d"],
-        "to_s2_cells": null,
-        "from_zone_ids": null,
-        "to_zone_ids": null,
-        "wait_time": 300,
-      },
-      {
-        "from_s2_cells": null,
-        "to_s2_cells": null,
         "from_zone_ids": ["zoneA"],
         "to_zone_ids": null,
         "wait_time": 300,
       },
       {
-        "from_s2_cells": null,
-        "to_s2_cells": null,
         "from_zone_ids": ["zoneA"],
         "to_zone_ids": ["zoneB"],
         "wait_time": 200,
@@ -799,10 +786,8 @@ The following fields are all attributes within the main "data" object for this f
 | Field Name | Presence | Type |Description |
  ---------- | ---- | -------- | ----------- |
  `booking_rules` |  REQUIRED  | Array | Array that contains one object per booking rules as defined below. |
-\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. FORBIDDEN otherwise.
-\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. FORBIDDEN otherwise.
-\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
-\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
+\-&nbsp;`from_zone_ids` | REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update.
+\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination.
  \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Real-time booking. To be use with `wait_times.json` or `wait_time`. <br>`1` - Up to same-day booking with advance notice.<br>`2` - Up to prior day(s) booking. ||
  \-&nbsp; `prior_notice_duration_min` | Conditionally REQUIRED | Integer | Minimum number of minutes before travel to make the request. REQUIRED for `booking_type=1`. FORBIDDEN otherwise. |
  \-&nbsp; `prior_notice_duration_max` | OPTIONAL | Integer | Maximum number of minutes before travel to make the booking request.  OPTIONAL for `booking_type=1`. FORBIDDEN otherwise.|
@@ -828,16 +813,6 @@ The following fields are all attributes within the main "data" object for this f
   "data": {
     "booking_rules": [
         {
-          "from_s2_cells": ["89c25998b" , "89c25998d"],
-          "to_s2_cells": null,
-          "from_zone_ids": null,
-          "to_zone_ids": null,
-          "booking_type": 1,
-          "prior_notice_duration_min": 120
-        },
-        {
-          "from_s2_cells": null,
-          "to_s2_cells": null,
           "from_zone_ids": ["zoneA"],
           "to_zone_ids": null,
           "booking_type": 1,
@@ -845,8 +820,6 @@ The following fields are all attributes within the main "data" object for this f
           "prior_notice_duration_max": 180,
         },
         {
-          "from_s2_cells": null,
-          "to_s2_cells": null,
           "from_zone_ids": ["zoneA"],
           "to_zone_ids": ["zoneB"],
           "booking_type": 2,

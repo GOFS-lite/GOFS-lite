@@ -29,15 +29,6 @@
           "items": {
             "type": "object",
             "properties": {
-              "from_s2_cells": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "to_s2_cells": {
-                "type": "array"
-              },
               "from_zone_ids": {
                 "type": "array",
                 "items": {
