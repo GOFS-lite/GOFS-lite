@@ -24,7 +24,6 @@ This document defines the format and structure of the files that comprise a GOFS
    - [operating_rules.json](#operating_rulesjson)
    - [calendars.json](#calendarsjson)
    - [fares.json](#faresjson)
-   - [wait_times.json](#wait_timesjson)
    - [wait_time](#wait_time)
    - [booking_rules.json](#booking_rulesjson)
    - [realtime_booking](#realtime_booking)
@@ -91,10 +90,9 @@ File Name | Presence | Description
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
-`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
-`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`wait_time` | Conditionally REQUIRED | Returns a wait time for queried areas. Either `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas. 
-`realtime_booking` | OPTIONAL | Returns details for available booking when static booking details can't be provided. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`realtime_booking` | OPTIONAL | Returns details for available booking when static booking details can't be provided. Either `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 
 ## File Requirements
 
@@ -102,7 +100,7 @@ File Name | Presence | Description
 
 Publishers SHOULD implement auto-discovery of GOFS-lite feeds by linking to the location of the `gofs.json` auto-discovery endpoint.
 
-* The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_infomation.json` file.
+* The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_information.json` file.
 * This is referenced via a _link_ tag with the following format:
   * `<link rel="gofs" type="application/json" href="https://www.example.com/data/gofs.json" />`
   * References:
@@ -390,7 +388,9 @@ Field Name | Presence | Type | Description
         {
           "type": "Feature",
           "zone_id": "zoneA",
-          "properties": {},
+          "properties": {
+            "name": "Montréal Area"
+          },
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -438,10 +438,7 @@ Field Name | Presence | Type | Description
                   45.55
                 ]
               ]
-            ],
-            "properties": {
-              "name": "Montréal Area"
-            }
+            ]
           }
         }
       ]
@@ -599,12 +596,12 @@ The first 10 kilometers cost 3.30 CAD per kilometer, and are charged every 250 m
           {
             "interval": 0.25,
             "end": 10,
-            "amount": 3.30,
+            "amount": 3.30
           },
           {
             "interval": 0.5,
             "start": 10,
-            "amount": 4.30,
+            "amount": 4.30
           }
         ]
       }
@@ -688,60 +685,9 @@ The user does not pay more than the base price of $2.50 CAD for the first 10km. 
 }
 ```
 
-### wait_times.json
-
-This file defines wait times for the entire system via either zones in `zones.json` or S2 cells. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
-
-The following fields are all attributes within the main "data" object for this feed.
-
-Field Name | Presence | Type | Description
----|---|---|---
-`wait_times` | REQUIRED | Array | Array that contains one object per wait time as defined below.
-\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. FORBIDDEN otherwise.
-\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. FORBIDDEN otherwise.
-\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
-\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
-\-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
-\-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
-
-##### Example:
-
-```jsonc
-{
-  "last_updated": 1609866247,
-  "ttl": 86400,
-  "version": "1.0",
-  "data": {
-    "wait_times": [
-      {
-        "from_s2_cells": ["89c25998b" , "89c25998d"],
-        "to_s2_cells": null,
-        "from_zone_ids": null,
-        "to_zone_ids": null,
-        "wait_time": 300,
-      },
-      {
-        "from_s2_cells": null,
-        "to_s2_cells": null,
-        "from_zone_ids": ["zoneA"],
-        "to_zone_ids": null,
-        "wait_time": 300,
-      },
-      {
-        "from_s2_cells": null,
-        "to_s2_cells": null,
-        "from_zone_ids": ["zoneA"],
-        "to_zone_ids": ["zoneB"],
-        "wait_time": 200,
-      }
-    ]
-  }
-}
-```
-
 ### wait_time
 
-This dynamic query provides wait time for specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users. 
+This dynamic query returns the wait time for a specific location. A `wait_time` request must be made for each user interaction.
 
 The request must have the following query parameters. 
 
@@ -799,11 +745,9 @@ The following fields are all attributes within the main "data" object for this f
 | Field Name | Presence | Type |Description |
  ---------- | ---- | -------- | ----------- |
  `booking_rules` |  REQUIRED  | Array | Array that contains one object per booking rules as defined below. |
-\-&nbsp;`from_s2_cells` | Conditionally REQUIRED | Array | The reference to one or many S2CellID that cover the area of the wait time update. Information on S2 cells can be found here https://s2geometry.io/. Required if `from_zone_ids` field is not populated. FORBIDDEN otherwise.
-\-&nbsp;`to_s2_cells` | OPTIONAL | Array | The reference to one or many S2CellID that cover the area of the destination. Information on S2 cells can be found here https://s2geometry.io/. Optional if `from_s2_cells` field is populated. FORBIDDEN otherwise.
-\-&nbsp;`from_zone_ids` | Conditionally REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update. Required if `from_s2_cells` field is not populated. FORBIDDEN otherwise.
-\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination. Optional if `from_zone_ids` field is populated. FORBIDDEN otherwise.
- \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Real-time booking. To be use with `wait_times.json` or `wait_time`. <br>`1` - Up to same-day booking with advance notice.<br>`2` - Up to prior day(s) booking. ||
+\-&nbsp;`from_zone_ids` | REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update.
+\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination.
+ \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Real-time booking. To be used with `wait_time`. <br>`1` - Up to same-day booking with advance notice.<br>`2` - Up to prior day(s) booking. ||
  \-&nbsp; `prior_notice_duration_min` | Conditionally REQUIRED | Integer | Minimum number of minutes before travel to make the request. REQUIRED for `booking_type=1`. FORBIDDEN otherwise. |
  \-&nbsp; `prior_notice_duration_max` | OPTIONAL | Integer | Maximum number of minutes before travel to make the booking request.  OPTIONAL for `booking_type=1`. FORBIDDEN otherwise.|
  \-&nbsp; `prior_notice_last_day` | Conditionally REQUIRED | Integer | Last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_day=1`). REQUIRED for `booking_type=2`. FORBIDDEN otherwise.|
@@ -828,16 +772,6 @@ The following fields are all attributes within the main "data" object for this f
   "data": {
     "booking_rules": [
         {
-          "from_s2_cells": ["89c25998b" , "89c25998d"],
-          "to_s2_cells": null,
-          "from_zone_ids": null,
-          "to_zone_ids": null,
-          "booking_type": 1,
-          "prior_notice_duration_min": 120
-        },
-        {
-          "from_s2_cells": null,
-          "to_s2_cells": null,
           "from_zone_ids": ["zoneA"],
           "to_zone_ids": null,
           "booking_type": 1,
@@ -845,8 +779,6 @@ The following fields are all attributes within the main "data" object for this f
           "prior_notice_duration_max": 180,
         },
         {
-          "from_s2_cells": null,
-          "to_s2_cells": null,
           "from_zone_ids": ["zoneA"],
           "to_zone_ids": ["zoneB"],
           "booking_type": 2,
