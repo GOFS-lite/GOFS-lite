@@ -90,7 +90,7 @@ File Name | Presence | Description
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
-`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`wait_time` | Conditionally REQUIRED | Returns a wait time for queried areas. Either `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas. 
 `realtime_booking` | OPTIONAL | Returns details for available booking when static booking details can't be provided. Either `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 
@@ -100,7 +100,7 @@ File Name | Presence | Description
 
 Publishers SHOULD implement auto-discovery of GOFS-lite feeds by linking to the location of the `gofs.json` auto-discovery endpoint.
 
-* The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_infomation.json` file.
+* The location of the auto-discovery file SHOULD be provided in the HTML area of the on-demand service's landing page hosted at the URL specified in the URL field of the `system_information.json` file.
 * This is referenced via a _link_ tag with the following format:
   * `<link rel="gofs" type="application/json" href="https://www.example.com/data/gofs.json" />`
   * References:
@@ -388,7 +388,9 @@ Field Name | Presence | Type | Description
         {
           "type": "Feature",
           "zone_id": "zoneA",
-          "properties": {},
+          "properties": {
+            "name": "Montréal Area"
+          },
           "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -436,10 +438,7 @@ Field Name | Presence | Type | Description
                   45.55
                 ]
               ]
-            ],
-            "properties": {
-              "name": "Montréal Area"
-            }
+            ]
           }
         }
       ]
@@ -597,12 +596,12 @@ The first 10 kilometers cost 3.30 CAD per kilometer, and are charged every 250 m
           {
             "interval": 0.25,
             "end": 10,
-            "amount": 3.30,
+            "amount": 3.30
           },
           {
             "interval": 0.5,
             "start": 10,
-            "amount": 4.30,
+            "amount": 4.30
           }
         ]
       }
