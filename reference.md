@@ -24,7 +24,6 @@ This document defines the format and structure of the files that comprise a GOFS
    - [operating_rules.json](#operating_rulesjson)
    - [calendars.json](#calendarsjson)
    - [fares.json](#faresjson)
-   - [wait_times.json](#wait_timesjson)
    - [wait_time](#wait_time)
    - [booking_rules.json](#booking_rulesjson)
    - [realtime_booking](#realtime_booking)
@@ -91,10 +90,9 @@ File Name | Presence | Description
 `operating_rules.json` | REQUIRED | Defines rules for intra-zone and inter-zone trips as well as operating times.
 `calendars.json` | REQUIRED | Defines dates and days when on-demand services are available to the riders.
 `fares.json` | OPTIONAL | Defines static fare rules for a system. 
-`wait_times.json` | Optionally REQUIRED | Defines global wait time for defined areas of service. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
-`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`wait_time` | Optionally REQUIRED | Returns a wait time for queried areas. Either `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 `booking_rules.json` | OPTIONAL | Returns rules for booking in queried areas. 
-`realtime_booking` | OPTIONAL | Returns details for available booking when static booking details can't be provided. Either `wait_times.json` or `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
+`realtime_booking` | OPTIONAL | Returns details for available booking when static booking details can't be provided. Either `wait_time` or `realtime_booking` MUST be provided if there are no `booking_rules` or at least one `booking_rule` is `booking_type=real-time`.
 
 ## File Requirements
 
@@ -688,47 +686,9 @@ The user does not pay more than the base price of $2.50 CAD for the first 10km. 
 }
 ```
 
-### wait_times.json
-
-This file defines wait times for the entire system via zones in `zones.json`. To provide wait times to consumers, either this method or `wait_time` method can be used. `wait_times.json` allows lower server load on on demand system's servers at the cost of potentially lower precision. 
-
-The following fields are all attributes within the main "data" object for this feed.
-
-Field Name | Presence | Type | Description
----|---|---|---
-`wait_times` | REQUIRED | Array | Array that contains one object per wait time as defined below.
-\-&nbsp;`from_zone_ids` | REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update.
-\-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination.
-\-&nbsp;`wait_time` | REQUIRED | Non-negative Integer | Time in seconds the rider will need to wait at the requested pickup location for being picked up, after completion of the service request.
-\-&nbsp;`brand_id` | OPTIONAL | Non-negative Integer | Brand ID from `service_brands.json` to which the wait time applies to which brand. If not specified, the updated `wait_time` is applied to every brand. 
-
-##### Example:
-
-```jsonc
-{
-  "last_updated": 1609866247,
-  "ttl": 86400,
-  "version": "1.0",
-  "data": {
-    "wait_times": [
-      {
-        "from_zone_ids": ["zoneA"],
-        "to_zone_ids": null,
-        "wait_time": 300,
-      },
-      {
-        "from_zone_ids": ["zoneA"],
-        "to_zone_ids": ["zoneB"],
-        "wait_time": 200,
-      }
-    ]
-  }
-}
-```
-
 ### wait_time
 
-This dynamic query provides wait time for specific location. To provide wait times to consumers, either this method or `wait_times.json` method can be used. `wait_time` allows more precise queries but requires a call on every interaction by users. 
+This dynamic query returns the wait time for a specific location. A `wait_time` request must be made for each user interaction.
 
 The request must have the following query parameters. 
 
@@ -788,7 +748,7 @@ The following fields are all attributes within the main "data" object for this f
  `booking_rules` |  REQUIRED  | Array | Array that contains one object per booking rules as defined below. |
 \-&nbsp;`from_zone_ids` | REQUIRED | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the wait time update.
 \-&nbsp;`to_zone_ids` | OPTIONAL | Array | One or many ID from a zone defined in `zones.json`  that cover the area of the destination.
- \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Real-time booking. To be use with `wait_times.json` or `wait_time`. <br>`1` - Up to same-day booking with advance notice.<br>`2` - Up to prior day(s) booking. ||
+ \-&nbsp; `booking_type` | REQUIRED | Enum | Indicates how far in advance booking can be made. <br><br>Valid options are:<br>`0` - Real-time booking. To be used with `wait_time`. <br>`1` - Up to same-day booking with advance notice.<br>`2` - Up to prior day(s) booking. ||
  \-&nbsp; `prior_notice_duration_min` | Conditionally REQUIRED | Integer | Minimum number of minutes before travel to make the request. REQUIRED for `booking_type=1`. FORBIDDEN otherwise. |
  \-&nbsp; `prior_notice_duration_max` | OPTIONAL | Integer | Maximum number of minutes before travel to make the booking request.  OPTIONAL for `booking_type=1`. FORBIDDEN otherwise.|
  \-&nbsp; `prior_notice_last_day` | Conditionally REQUIRED | Integer | Last day before travel to make the booking request (e.g. “Ride must be booked 1 day in advance before 5PM” will be encoded as `prior_notice_last_day=1`). REQUIRED for `booking_type=2`. FORBIDDEN otherwise.|
